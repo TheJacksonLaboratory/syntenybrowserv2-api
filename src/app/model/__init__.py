@@ -25,10 +25,10 @@ def init_db(app):
 
 
 def create_all(engine):
-    from .hello_world_model import Hello
+    # from .hello_world_model import Hello
     Base.metadata.create_all(engine, checkfirst=True)
 
 def drop_all(engine):
     Base.metadata.drop_all(engine)
 
-from .hello_world_model import Hello
+# from .hello_world_model import Hello

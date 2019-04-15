@@ -6,7 +6,7 @@ from flask_script import Manager
 
 from flask_migrate import Migrate, MigrateCommand
 
-from src.app.model.hello_world_model import Hello
+# from src.app.model.hello_world_model import Hello
 
 
 from src.application import app
