@@ -1,6 +1,21 @@
+"""
+Interact with ldap
+"""
+
 import ldap
 import ldap.filter
 import flask
+
+
+__author__ = "Glen Beane"
+__contact__ = "glen.beane@jax.org"
+__status__ = "Production"
+__date__ = "03/22/2019"
+
+
+# Disable "Modeule 'ldap' has no <> member
+#   ldap indeed has those member, pylint just doesn't know
+# pylint: disable=E1101
 
 
 # we define a few different exceptions so we can let the caller know why the
@@ -11,25 +26,24 @@ class InvalidCredentials(Exception):
     Thrown instead of an ldap.INVALID_CREDENTIALS exception, so the rest of
     the app doesn't depend on the ldap module
     """
-    pass
 
 
 class NotInLoginGroup(Exception):
     """
     Thrown if the user is not a member of the required AD login group
     """
-    pass
 
 
 class Timeout(Exception):
     """
     searching ldap took too long
     """
-    pass
 
 
 class UserNotFound(Exception):
-    pass
+    """
+    The specified user wasn't found
+    """
 
 
 def __get_ldap_config():

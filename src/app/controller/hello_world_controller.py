@@ -1,24 +1,68 @@
-from flask_restplus import Resource, Namespace
+"""
+An example controller
+"""
+from flask_restplus import Resource, Namespace, reqparse
+from celery.states import READY_STATES as CELERY_READY_STATES
 from flask_jwt_extended import jwt_required
 from ..service.hello_world_service import say_hello
 
+from ..service.task_service_example import long_running_task
 
-ns = Namespace('hello', description='The hello endpoint')
+
+NS = Namespace('hello', description='The hello endpoint')
 
 
-@ns.route('/sayhello')
+@NS.route('/sayhello')
 class HelloWorld(Resource):
+    """ Example unprotected routes """
 
     @staticmethod
     def get():
+        """ Say hello """
         return say_hello(), 200
 
-@ns.route('/protectedhello')
+
+@NS.route('/protectedhello')
 class ProtectedHelloWorld(Resource):
+    """ Examples protected routes """
 
     # Manually set endpoint to require authorization
     #  Use security=None to disable default required auth
-    @ns.doc(security='Bearer Auth')
+    @staticmethod
+    @NS.doc(security='Access')
     @jwt_required
-    def get(self):
+    def get():
+        """ Say hello if provided valid jwt """
         return say_hello(), 200
+
+
+@NS.route('/slow_reverse')
+class SlowReverser(Resource):
+    """ Reverse a string using a task queue """
+
+    post_parser = reqparse.RequestParser()
+    post_parser.add_argument('to_reverse', required=True)
+
+    get_parser = reqparse.RequestParser()
+    get_parser.add_argument('task_id', required=True)
+
+    @NS.expect(post_parser, validate=True)
+    def post(self):
+        """ Submit a string to reverse, returns task_id used to get result """
+        args = self.post_parser.parse_args()
+        res = long_running_task.apply_async([args['to_reverse']])
+        result = {'id': res.task_id, 'input': args['to_reverse']}
+        return result, 200
+
+    @NS.expect(get_parser, validate=True)
+    def get(self):
+        """ Get the status, or status and result if ready """
+        args = self.get_parser.parse_args()
+        retval = long_running_task.AsyncResult(args['task_id'])
+        response = {'status': retval.status}
+
+        if retval.status in CELERY_READY_STATES:
+            result = retval.get(timeout=1.0)
+            response['result'] = repr(result)
+
+        return response

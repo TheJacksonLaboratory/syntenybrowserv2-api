@@ -1,39 +1,37 @@
-import sys
-import unittest
-import logging
+"""
+This is the manager entrypoint to the application
+"""
 
+import os
 from flask_script import Manager
+from flask_migrate import MigrateCommand
 
-from flask_migrate import Migrate, MigrateCommand
+from src.app import create_app
+from src.cli.run import RunCommand
+from src.cli.test import RunTestsCommand, RunTestsXMLCommand
+from src.cli.celery import StartCeleryWorkersCommand
+from src.cli.config import GenerateSecretsCommand, InitConfigCommand
 
-# from src.app.model.hello_world_model import Hello
+MANAGER = Manager(create_app(os.getenv('FLASK_CONFIG') or 'dev'))
+
+# Run the application
+MANAGER.add_command('run', RunCommand())
+
+# Perform database operations
+MANAGER.add_command('db', MigrateCommand)
+
+# Manage the 'synbrowser.config' file
+MANAGER.add_command('create_secrets', GenerateSecretsCommand)
+MANAGER.add_command('init_config', InitConfigCommand)
 
 
-from src.application import app
-from src.app.model import Base
+# Start and stop celery workers
+MANAGER.add_command('start_workers', StartCeleryWorkersCommand())
 
-manager = Manager(app)
-
-
-migrate = Migrate(app, Base)
-manager.add_command('db', MigrateCommand)
-
-
-@manager.command
-def run():
-    app.run()
-
-
-@manager.command
-def test():
-    """Runs the unit tests."""
-    logging.basicConfig(stream=sys.stderr)
-    tests = unittest.TestLoader().discover('src/test', pattern='test*.py')
-    result = unittest.TextTestRunner(verbosity=2).run(tests)
-    if result.wasSuccessful():
-        return 0
-    return 1
+# Run tests
+MANAGER.add_command('test', RunTestsCommand())
+MANAGER.add_command('test_xml', RunTestsXMLCommand())
 
 
 if __name__ == '__main__':
-    manager.run()
+    MANAGER.run()

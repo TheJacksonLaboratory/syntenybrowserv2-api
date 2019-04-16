@@ -1,36 +1,51 @@
-from flask_restplus import Api
-from flask import Blueprint
+"""
+Factory that includes the api blueprint
+"""
+from flask import redirect
+from flask_jwt_extended import JWTManager
 
-from .controller.auth_controller import ns as auth_ns
-from .controller.colors_controller import ns as colors_ns
-from .controller.config_controller import ns as config_ns
-# from .controller.hello_world_controller import ns as hello_ns
-from .controller.synteny_blocks_controller import ns as blocks_ns
-
-authorizations = {
-    'Bearer Auth': {
-        'type': 'apiKey',
-        'in': 'header',
-        'name': 'Authorization'
-    },
-}
+from src import factory
+from .controller import API_BLUEPRINT, API
+from .model import MA, init_db, BASE
+from .utils import jwt as jwt_utils
 
 
-blueprint = Blueprint('api', __name__)
+def _root():  # pylint: disable=W0612
+    """ Redirect the root endpoint to the api blueprint """
+    return redirect('/api')
 
-api = Api(blueprint,
-          title='JAX Synteny Browser Service',
-          version='0.0.1',
-          description='Boilerplate Flask Service from Computational Sciences of The Jackson Laboratory',
 
-          # Change this to 'Bearer Auth' to require token by default
-          security=None,
-          authorizations=authorizations,
+def create_app(config_name=None, app=None, config_object=None):
+    """
+    Create the app with the api blueprint registered
+    :param config_name:
+    :param app:
+    :param config_object:
+    :return:
+    """
+    app = factory.create_app(config_name, app, config_object)
 
-          )
+    # Register blueprints, try is incase the blueprint has
+    # already been registered on existing app instance
+    try:
+        app.register_blueprint(API_BLUEPRINT, url_prefix='/api')
+        app.add_url_rule('/', 'index', _root)
+    except (ValueError, AssertionError):
+        pass
 
-api.add_namespace(auth_ns)
-api.add_namespace(blocks_ns)
-api.add_namespace(colors_ns)
-api.add_namespace(config_ns)
-# api.add_namespace(hello_ns)
+    # JWT Setup
+    jwt = JWTManager(app)
+    jwt._set_error_handler_callbacks(API)  # pylint: disable=W0212
+
+    # Setup JWT Claims
+    @jwt.user_claims_loader
+    def __add_claims_to_access_token(identity):
+        return jwt_utils.add_claims_to_jwt(identity)
+
+
+    @app.route('/')
+    def root():  # pylint: disable=W0612
+        """ Redirect the root endpoint to the api blueprint """
+        return redirect('/api')
+
+    return app

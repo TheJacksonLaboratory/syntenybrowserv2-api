@@ -1,38 +1,40 @@
+"""
+Tests the various configuration environments
+"""
+
 import unittest
 from flask import current_app
-from flask_testing import TestCase
-
-from manage import app
+from src.test import BaseTestCase
 
 
-class TestDevelopmentConfig(TestCase):
-    def create_app(self):
-        app.config.from_object('src.config.DevelopmentConfig')
-        return app
+class TestDevelopmentConfig(BaseTestCase):
+    """ Test the development config environment """
+    __config_name__ = 'dev'
 
     def test_app_is_development(self):
-        self.assertFalse(app.config['SECRET_KEY'] is 'my_precious')
-        self.assertTrue(app.config['DEBUG'] is True)
+        """ Check that the app is using the dev config """
+        self.assertFalse(self.app.config['SECRET_KEY'] == 'my_precious')
+        self.assertTrue(self.app.config['DEBUG'] is True)
         self.assertFalse(current_app is None)
 
 
-class TestTestingConfig(TestCase):
-    def create_app(self):
-        app.config.from_object('src.config.TestingConfig')
-        return app
+class TestTestingConfig(BaseTestCase):
+    """ Test the testing config environment """
+    __config_name__ = 'test'
 
     def test_app_is_testing(self):
-        self.assertFalse(app.config['SECRET_KEY'] is 'my_precious')
-        self.assertTrue(app.config['DEBUG'])
+        """ Check that the app is using the testing config """
+        self.assertFalse(self.app.config['SECRET_KEY'] == 'my_precious')
+        self.assertTrue(self.app.config['DEBUG'])
 
 
-class TestProductionConfig(TestCase):
-    def create_app(self):
-        app.config.from_object('src.config.ProductionConfig')
-        return app
+class TestProductionConfig(BaseTestCase):
+    """ Test the production config environment """
+    __config_name__ = 'prod'
 
     def test_app_is_production(self):
-        self.assertTrue(app.config['DEBUG'] is False)
+        """ Test that the app is using the production config """
+        self.assertTrue(self.app.config['DEBUG'] is False)
 
 
 if __name__ == '__main__':
