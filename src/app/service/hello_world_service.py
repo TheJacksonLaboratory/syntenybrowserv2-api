@@ -18,14 +18,16 @@ from ..model.hello_world_model import Hello
 LOGGER = logging.getLogger('service.sayhello')
 LOGGER.addHandler(MODULE_HANDLER)
 
-def say_hello(name='World'):
+
+def say_hello(name=None):
     """
     An example service function that says hello
     :param name: A name to say hello to, defaults to 'World'
     :return: dict {'message': <response>}
     """
-    LOGGER.warning("Started saying hello to: {}".format(name))
+    name = name or 'World'
+    LOGGER.warning("Started saying hello to: %s", name)
     SESSION.add(Hello(who=name, when=dt.datetime.now()))
     SESSION.commit()
-    LOGGER.warning("Said hello to: %".format(name))
+    LOGGER.warning("Said hello to: %s", name)
     return {"message": "Hello {}!".format(name if name else "World")}

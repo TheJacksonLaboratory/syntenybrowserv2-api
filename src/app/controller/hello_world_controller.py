@@ -4,8 +4,9 @@ An example controller
 from flask_restplus import Resource, Namespace, reqparse
 from celery.states import READY_STATES as CELERY_READY_STATES
 from flask_jwt_extended import jwt_required
-from ..service.hello_world_service import say_hello
+from .utils.jwt import required_jwt_matches_url, optional_jwt_matches_url
 
+from ..service.hello_world_service import say_hello
 from ..service.task_service_example import long_running_task
 
 
@@ -22,7 +23,7 @@ class HelloWorld(Resource):
         return say_hello(), 200
 
 
-@NS.route('/protectedhello')
+@NS.route('/pvt_hello')
 class ProtectedHelloWorld(Resource):
     """ Examples protected routes """
 
@@ -34,6 +35,30 @@ class ProtectedHelloWorld(Resource):
     def get():
         """ Say hello if provided valid jwt """
         return say_hello(), 200
+
+
+@NS.route('/pvt_hello_user/<int:user_id>')
+class UserSpecificProtectedHelloWorld(Resource):
+    """ Example that validates the user id in url matches provided token"""
+
+    @staticmethod
+    @NS.doc(security='Access')
+    @required_jwt_matches_url('user_id', 'uid')
+    def get(user_id):
+        """ Say hello if valid jwt, and jwt contains user_id in url """
+        return say_hello(user_id), 200
+
+
+@NS.route('/pvt_hello_combined', '/pvt_hello_combined/<int:user_id>')
+class UserOptionalProtectedHelloWorld(Resource):
+    """ Example that validates the user id in url matches provided token"""
+
+    @staticmethod
+    @NS.doc(security=('Access', None))
+    @optional_jwt_matches_url('user_id', 'uid')
+    def get(user_id=None):
+        """ Require JWT match url if JWT or URL id provided """
+        return say_hello(user_id), 200
 
 
 @NS.route('/slow_reverse')

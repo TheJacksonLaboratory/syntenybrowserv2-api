@@ -39,7 +39,7 @@ def create_app(config_name=None, app=None, config_object=None):
 
     # Setup JWT Claims
     @jwt.user_claims_loader
-    def __add_claims_to_access_token(identity):
+    def __add_claims_to_token(identity):
         return jwt_utils.add_claims_to_jwt(identity)
 
 

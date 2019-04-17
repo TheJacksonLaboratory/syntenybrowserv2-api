@@ -6,6 +6,7 @@ from math import ceil
 
 
 class PaginationError(Exception):
+    """ Exception class for pagniation errors """
     pass
 
 
@@ -99,14 +100,12 @@ def paginate(query, page=1, per_page=50, error_out=True, max_per_page=None, coun
     if page < 1:
         if error_out:
             raise PaginationError("Not Found")
-        else:
-            page = 1
+        page = 1
 
     if per_page < 0:
         if error_out:
             raise PaginationError("Not Found")
-        else:
-            per_page = 20
+        per_page = 20
 
     items = query.limit(per_page).offset((page - 1) * per_page).all()
 
@@ -121,4 +120,3 @@ def paginate(query, page=1, per_page=50, error_out=True, max_per_page=None, coun
         total = query.order_by(None).count()
 
     return Pagination(query, page, per_page, total, items)
-
