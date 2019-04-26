@@ -2,13 +2,13 @@ import os
 from flask import json, url_for, current_app
 
 
-def get_config(species_id):
+def get_colors():
     """
+    Returns the colors scheme to be used in genome chromosomes representation.
 
-    :param species_id: NCBI specie ID
     :return: the config file content
     """
-    file_name = '{0}_config.json'.format(species_id)
+    file_name = 'genome_colors.json'
 
     rel_path = url_for('static', filename='data/{0}'.format(file_name))
     # remove the leading slash to allow the os.path.join to properly work
