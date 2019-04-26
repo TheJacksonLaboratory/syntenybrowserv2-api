@@ -2,7 +2,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
 
-
 Base = declarative_base()
 session_factory = sessionmaker(autoflush=False,
                                autocommit=False)
@@ -19,6 +18,7 @@ def init_db(app):
     :return: sqlalchemy engine, just in case you want it
     """
     engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+
     session_factory.configure(bind=engine)
     create_all(engine)
     return engine
@@ -28,7 +28,13 @@ def create_all(engine):
     # from .hello_world_model import Hello
     Base.metadata.create_all(engine, checkfirst=True)
 
+
 def drop_all(engine):
     Base.metadata.drop_all(engine)
 
-# from .hello_world_model import Hello
+
+# from .feature import Feature
+from .gene import Gene
+from .homolog import Homolog
+from .synteny_block import SyntenicBlock
+from .transcript import Transcript
