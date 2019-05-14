@@ -59,7 +59,7 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + \
                               os.path.join(BASEDIR,
-                                           'synbrowser.db')
+                                           '../synbrowser.db')
 
 
 class DevelopmentConfig(Config):

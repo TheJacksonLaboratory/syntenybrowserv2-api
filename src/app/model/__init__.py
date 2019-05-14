@@ -47,3 +47,8 @@ def drop_all(engine):
     :return:
     """
     BASE.metadata.drop_all(engine)
+
+from .gene import Gene
+from .homolog import Homolog
+from .synteny_block import SyntenicBlock
+from .transcript import Transcript
