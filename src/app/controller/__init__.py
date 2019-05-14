@@ -7,7 +7,6 @@ from flask import Blueprint
 
 from .utils.jwt import AUTHORIZATIONS
 
-from .hello_world_controller import NS as hello_ns
 from .auth_controller import NS as auth_ns
 from .colors_controller import ns as colors_ns
 from .genes_controller import ns as genes_ns
@@ -29,8 +28,6 @@ API = Api(API_BLUEPRINT,
 
           )
 
-
-API.add_namespace(hello_ns)
 
 API.add_namespace(auth_ns)
 API.add_namespace(blocks_ns)
