@@ -20,7 +20,7 @@ class AuthTest(BaseLiveServerTestCase):
         self.assertTrue('refresh' in list(response.json().keys()))
         self.assertTrue('access' in list(response.json().keys()))
 
-    # TODO: When authenticated routes are intoroduced, make sure to test the access token here
+    # TODO: When authenticated routes are introduced, make sure to test the access token here
     @unittest.skip("No protected routes to test against")
     def test_access_token_works(self):
         """ The access token should let us access a protected endpoint """
