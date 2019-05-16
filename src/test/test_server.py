@@ -5,6 +5,7 @@ import requests
 from flask import url_for
 
 from src.test import BaseLiveServerTestCase
+from src.app.service.colors_service import get_colors
 
 
 class SmokeTest(BaseLiveServerTestCase):
@@ -15,11 +16,11 @@ class SmokeTest(BaseLiveServerTestCase):
         response = requests.get(self.get_server_url())
         self.assertEqual(response.status_code, 200)
 
-    def test_hello(self):
+    def test_colors(self):
         """ Can we reach a known endpoint? """
-        uri = self.get_server_url() + url_for('api.hello_hello_world')
+        uri = self.get_server_url() + url_for('api.color-map_client_colors')
         response = requests.get(uri)
-        self.assertEqual(response.json(), dict(message="Hello World!"))
+        self.assertEqual(response.json(), get_colors())
 
 
 if __name__ == '__main__':

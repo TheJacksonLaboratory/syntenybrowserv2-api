@@ -7,6 +7,7 @@ from flask import url_for
 
 from src.test import BaseLiveServerTestCase
 
+
 class AuthTest(BaseLiveServerTestCase):
     """ A class to test the auth endpoints """
 
@@ -14,11 +15,13 @@ class AuthTest(BaseLiveServerTestCase):
         """ The auth endpoint should give us a refresh and access token """
         fake = Faker()
         uri = self.get_server_url() + url_for('api.auth_user_login')
-        data = {"username": fake.profile()['username'], "password": fake.password()} # pylint: disable=E1101
+        data = {"username": fake.profile()['username'], "password": fake.password()}  # pylint: disable=E1101
         response = requests.post(uri, json=data)
         self.assertTrue('refresh' in list(response.json().keys()))
         self.assertTrue('access' in list(response.json().keys()))
 
+    # TODO: When authenticated routes are introduced, make sure to test the access token here
+    @unittest.skip("No protected routes to test against")
     def test_access_token_works(self):
         """ The access token should let us access a protected endpoint """
         fake = Faker()
@@ -27,6 +30,7 @@ class AuthTest(BaseLiveServerTestCase):
         auth_response = requests.post(auth_uri, json=data)
         access_token = auth_response.json()['access']
 
+        # TODO: Replace Hello World with protected route that exists
         protected_uri = self.get_server_url() + url_for('api.hello_protected_hello_world')
         auth_header = {'Authorization': 'Bearer {}'.format(access_token)}
         protected_response = requests.get(protected_uri, headers=auth_header)
@@ -36,7 +40,7 @@ class AuthTest(BaseLiveServerTestCase):
         """ The refresh token should get us a new access token """
         fake = Faker()
         auth_uri = self.get_server_url() + url_for('api.auth_user_login')
-        data = {"username": fake.profile()['username'], "password": fake.password()} # pylint: disable=E1101
+        data = {"username": fake.profile()['username'], "password": fake.password()}  # pylint: disable=E1101
         auth_response = requests.post(auth_uri, json=data)
         refresh_token = auth_response.json()['refresh']
 
