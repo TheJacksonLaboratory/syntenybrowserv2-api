@@ -9,7 +9,6 @@ Tests related to database availability, creation, and interaction
 
 import unittest
 from src.test import BaseDBTestCase
-from src.app.model.hello_world_model import Hello, HelloSchema
 
 
 class DbConnectionTest(BaseDBTestCase):
@@ -20,7 +19,8 @@ class DbConnectionTest(BaseDBTestCase):
         with self.engine.connect() as conn:
             self.assertFalse(conn.closed)
 
-
+# TODO Implement unittests for the defined models
+@unittest.skip("Hello model tests aren't relevant to this application")
 class SqlalchemyHelloModelTest(BaseDBTestCase):
     """ Test interacting with the provided sqlalchemy definitions """
 
