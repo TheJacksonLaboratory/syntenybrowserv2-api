@@ -2,17 +2,27 @@ from sqlalchemy import *
 from sqlalchemy.orm import relationship
 from . import BASE
 
+homolog = Table(
+    'homolog', BASE.metadata,
+    Column('ref_gene_id', String, ForeignKey('gene.gene_id'), primary_key=True),
+    Column('comp_gene_id', String, ForeignKey('gene.gene_id'), primary_key=True)
+)
+
 
 class Gene(BASE):
     __tablename__ = 'gene'
 
     id = Column('gene_id', String, primary_key=True)
-    taxon_id = Column('gene_taxonid', Integer, primary_key=True)
+    taxon_id = Column('gene_taxonid', Integer)
     symbol = Column('gene_symbol', String)
     chr = Column('gene_chr', String)
     start = Column('gene_start_pos', Integer)
     end = Column('gene_end_pos', Integer)
     strand = Column('gene_strand', String)
     type = Column('gene_type', String)
-
-    transcript = relationship('Transcript')
+    exons = relationship('Exon')
+    homologs = relationship('Gene', secondary='homolog',
+                            primaryjoin='Gene.id == homolog.c.ref_gene_id',
+                            secondaryjoin='Gene.id == homolog.c.comp_gene_id',
+                            backref='references'
+                            )

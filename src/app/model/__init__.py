@@ -48,7 +48,8 @@ def drop_all(engine):
     """
     BASE.metadata.drop_all(engine)
 
+
+
 from .gene import Gene
-from .homolog import Homolog
+from .exon import Exon
 from .synteny_block import SyntenicBlock
-from .transcript import Transcript
