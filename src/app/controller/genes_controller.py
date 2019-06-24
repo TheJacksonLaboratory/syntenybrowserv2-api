@@ -1,13 +1,13 @@
 from flask_restplus import Resource, Namespace, fields, abort
-from ..model import SESSION, Gene, Transcript
+from ..model import SESSION, Gene, Exon
 
 
 ns = Namespace('genes', description='Returns back gene information for all genes, all genes per species, or all '
                                     'genes per species and chromosome')
 
-transcript_schema = ns.model('transcript', {
-    'start': fields.Integer,
-    'end': fields.Integer
+exons_schema = ns.model('exon', {
+    'start': fields.Integer(attribute='exon_start_pos'),
+    'end': fields.Integer(attribute='exon_end_pos')
 })
 
 genes_schema = ns.model('gene', {
@@ -19,7 +19,7 @@ genes_schema = ns.model('gene', {
     'end': fields.Integer,
     'strand': fields.String,
     'type': fields.String,
-    'transcript': fields.List(fields.Nested(transcript_schema))
+    'exons': fields.List(fields.Nested(exons_schema))
 })
 
 genes_meta_schema = ns.model('gene', {
