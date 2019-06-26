@@ -4,8 +4,8 @@ from sqlalchemy import and_
 from ..model import SESSION, Gene, Exon
 
 
-ns = Namespace('homologs', description='Given reference and comparison species IDs, and a '
-               'chromosome, returns all existing homologs between the species on that particular chromosome')
+ns = Namespace('homologs', description='Given reference and comparison species IDs, and a chromosome number, returns '
+               'all homologs matched to genes on the specified chromosome in the reference species')
 
 
 # Class FormatGeneData does only pseudo-formatting. This is needed because

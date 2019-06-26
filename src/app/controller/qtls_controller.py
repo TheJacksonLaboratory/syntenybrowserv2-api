@@ -4,8 +4,8 @@ from ..model import SESSION
 from sqlalchemy import and_
 
 
-ns = Namespace('qtls', description='Returns back QTL information for all QTLs in the database, '
-                                   'all QTLs per species, or all QTLs per species and chromosome')
+ns = Namespace('qtls', description='Returns QTL information for all QTLs available in the database, as well as '
+                                   'QTLs per specified species, and QTLs per specified species and a chromosome.')
 
 
 qtls_schema = ns.model('feature', {

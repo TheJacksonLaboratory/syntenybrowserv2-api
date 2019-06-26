@@ -2,8 +2,8 @@ from flask_restplus import Resource, Namespace, fields, abort
 from ..model import SESSION, Gene, Exon
 
 
-ns = Namespace('genes', description='Returns back gene information for all genes, all genes per species, or all '
-                                    'genes per species and chromosome')
+ns = Namespace('genes', description='Returns gene information about all genes available in the database, as well as '
+                                    'genes per specified species, and genes per specified species and a chromosome.')
 
 exons_schema = ns.model('exon', {
     'start': fields.Integer(attribute='exon_start_pos'),
