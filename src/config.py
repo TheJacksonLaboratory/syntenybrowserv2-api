@@ -73,6 +73,9 @@ class TestingConfig(Config):
     TESTING = True
 
     PRESERVE_CONTEXT_ON_EXCEPTION = False
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + \
+                              os.path.join(BASEDIR,
+                                           '../synbrowser.test.db')
 
 
 class ProductionConfig(Config):
