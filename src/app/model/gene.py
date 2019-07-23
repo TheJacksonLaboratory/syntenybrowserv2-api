@@ -12,17 +12,17 @@ homolog = Table(
 class Gene(BASE):
     __tablename__ = 'gene'
 
-    id = Column('gene_id', String, primary_key=True)
-    taxon_id = Column('gene_taxonid', Integer)
-    symbol = Column('gene_symbol', String)
-    chr = Column('gene_chr', String)
-    start = Column('gene_start_pos', Integer)
-    end = Column('gene_end_pos', Integer)
-    strand = Column('gene_strand', String)
-    type = Column('gene_type', String)
+    gene_id = Column(String, primary_key=True)
+    gene_taxonid = Column(Integer)
+    gene_symbol = Column(String)
+    gene_chr = Column(String)
+    gene_start_pos = Column(Integer)
+    gene_end_pos = Column(Integer)
+    gene_strand = Column(String)
+    gene_type = Column(String)
     exons = relationship('Exon')
     homologs = relationship('Gene', secondary='homolog',
-                            primaryjoin='Gene.id == homolog.c.ref_gene_id',
-                            secondaryjoin='Gene.id == homolog.c.comp_gene_id',
+                            primaryjoin='Gene.gene_id == homolog.c.ref_gene_id',
+                            secondaryjoin='Gene.gene_id == homolog.c.comp_gene_id',
                             backref='references'
                             )

@@ -81,7 +81,7 @@ class SyntenyBlockModelTest(BaseDBTestCase):
             SyntenicBlock.ref_taxonid == non_existent_species_id,
             SyntenicBlock.comp_taxonid == 9606
         ).all()
-        print('check: ', blocks)
+
         self.assertTrue(blocks == [])
 
     def tearDown(self):
