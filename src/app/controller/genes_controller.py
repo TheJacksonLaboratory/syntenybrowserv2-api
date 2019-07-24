@@ -29,7 +29,8 @@ genes_meta_schema = ns.model('gene', {
     'chr': fields.String(attribute='gene_chr'),
     'start': fields.Integer(attribute='gene_start_pos'),
     'end': fields.Integer(attribute='gene_end_pos'),
-    'strand': fields.String(attribute='gene_strand')
+    'strand': fields.String(attribute='gene_strand'),
+    'type': fields.String(attribute='gene_type')
 })
 
 
