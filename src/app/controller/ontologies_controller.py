@@ -1,5 +1,5 @@
 from flask_restplus import Resource, Namespace, fields, abort
-
+from sqlalchemy.orm import aliased
 from sqlalchemy import and_
 
 from ..model.ontology_term import OntologyTerm
@@ -36,8 +36,8 @@ gene_terms_schema = ns.model('Gene', {
     'end': fields.Integer(attribute='gene_end_pos'),
     'strand': fields.String(attribute='gene_strand'),
     'type': fields.String(attribute='gene_type'),
-    'id': fields.Nested(terms_schema_simple),
-    'name': fields.Nested(terms_schema_simple)
+    'term_id': fields.String(attribute='ontology_term.id'),
+    'term_name': fields.String(attribute='ontology_term.name')
 })
 
 terms_schema = ns.model('OntologyTerm', {
@@ -45,7 +45,7 @@ terms_schema = ns.model('OntologyTerm', {
     'name': fields.String,
     'namespace': fields.String,
     'def': fields.String(attribute='definition'),
-    'descendants': fields.List(fields.Nested(terms_schema_simple))
+    'descendants': fields.List(FormatTermData())
  })
 
 
@@ -97,7 +97,7 @@ def do_search(parent, parent_terms):
         do_search(tm, parent_terms)
 
 
-@ns.route('/ontologies/associations/<int:species_id>/<string:ont_term_id>')
+@ns.route('/associations/<int:species_id>/<string:ont_term_id>')
 @ns.param('species_id',
           'NCBI species ID, such as 9606 (H. sapiens), 10090 (M. musculus), etc.')
 @ns.param('ont_term_id',
@@ -113,22 +113,26 @@ class OntAssocByTaxonAndTerm(Resource):
             .filter(OntologyTerm.id == ont_term_id)
 
         terms = query.all()
-        print("check 1")
+
         for t in terms:
             for descendant in t.descendants:
                 parent_terms.append(descendant.id)
-        print(parent_terms)
-        print("check 2")
+
         n = len(parent_terms)
 
+        # get all descendants
         for i in range(0, n):
             do_search(parent_terms[i], parent_terms)
 
-        q1 = SESSION.query(Gene).filter(Gene.gene_taxonid == species_id).all()
-            # .filter(and_(Gene.ontology_term.id.in_(parent_terms)),
-            #        Gene.gene_taxonid == species_id).all()
-        associations = {"check": "check"}
+        all_terms = list(set(parent_terms))
+
+        aliased_ont_term = aliased(OntologyTerm, name="aliased_ont_term")
+        genes = SESSION.query(Gene).join(Gene.ontology_term)\
+            .join(aliased_ont_term)\
+            .filter(aliased_ont_term.id.in_(all_terms))\
+            .filter(Gene.gene_taxonid == species_id).all()
+
         # when the associations list is empty
-        if not q1:
+        if not genes:
             abort(400, 'no associations could be returned')
-        return q1
+        return genes
