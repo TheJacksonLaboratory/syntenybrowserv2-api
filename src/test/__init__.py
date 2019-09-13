@@ -37,7 +37,9 @@ class BaseLiveServerTestCase(LiveServerTestCase):
     __config_name__ = 'test'
 
     def create_app(self):
+        print('check 1')
         app = create_app(self.__config_name__)
+        # app.config['LIVESERVER_PORT'] = 8080
         app.config['LIVESERVER_TIMEOUT'] = 10
         app.config['PRESERVE_CONTEXT_ON_EXCEPTION'] = False
         self.engine = app.config['db_engine']

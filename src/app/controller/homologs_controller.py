@@ -15,9 +15,9 @@ ns = Namespace('homologs', description='Given reference and comparison species I
 class FormatGeneData(fields.Raw):
     def format(self, o):
         return {
-            'id': o.id,
-            'taxon_id': o.taxon_id,
-            'chr': o.chr
+            'id': o.gene_id,
+            'taxon_id': o.gene_taxonid,
+            'chr': o.gene_chr
         }
 
 
@@ -29,14 +29,14 @@ exons_schema = ns.model('exon', {
 
 
 homologs_schema = ns.model('gene', {
-    'id': fields.String,
-    'taxon_id': fields.Integer,
-    'symbol': fields.String,
-    'chr': fields.String,
-    'start': fields.Integer,
-    'end': fields.Integer,
-    'strand': fields.String,
-    'type': fields.String,
+    'id': fields.String(attribute="gene_id"),
+    'taxon_id': fields.Integer(attribute='gene_taxonid'),
+    'symbol': fields.String(attribute='gene_symbol'),
+    'chr': fields.String(attribute='gene_chr'),
+    'start': fields.Integer(attribute='gene_start_pos'),
+    'end': fields.Integer(attribute='gene_end_pos'),
+    'strand': fields.String(attribute='gene_strand'),
+    'type': fields.String(attribute='gene_type'),
     'exons': fields.List(fields.Nested(exons_schema)),
     'homologs': fields.List(FormatGeneData())
 })
@@ -56,7 +56,8 @@ class HomologsByChromosome(Resource):
         # select all reference species genes,
         # located on the specified chromosome
         genes_list = SESSION.query(Gene)\
-            .filter(and_(Gene.chr == chromosome, Gene.taxon_id == ref_taxonid))\
+            .filter(and_(Gene.gene_chr == chromosome,
+                         Gene.gene_taxonid == ref_taxonid))\
             .all()
 
         # iterate through the gene list and identify all
@@ -64,13 +65,12 @@ class HomologsByChromosome(Resource):
         homologs_set = set()
         for g in genes_list:
             for h in g.homologs:
-                if h.taxon_id == comp_taxonid:
-                    homologs_set.add(h.id)
+                if h.gene_taxonid == comp_taxonid:
+                    homologs_set.add(h.gene_id)
 
         # the maximum number of host parameters in a single
         # SQL statement in SQLite is 999. Chunk the data so that
-        # the request does not result in 'sqlite.OperationalError:
-        # too many SQL variables'
+        # the request does not result in 'sqlite.OperationalError: too many SQL variables'
         sqlite_max_variable_num = 999
         # convert the set to list (since lists can be indexed)
         homologs_list = list(homologs_set)
@@ -85,7 +85,7 @@ class HomologsByChromosome(Resource):
             # to all reference species genes, located on the specified chromosome
             query = SESSION\
                 .query(Gene)\
-                .filter(and_(Gene.taxon_id == comp_taxonid, Gene.id.in_(chunk)))
+                .filter(and_(Gene.gene_taxonid == comp_taxonid, Gene.gene_id.in_(chunk)))
 
             homologs.extend(query.all())
 

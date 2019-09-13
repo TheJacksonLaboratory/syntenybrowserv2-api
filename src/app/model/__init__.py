@@ -52,4 +52,5 @@ def drop_all(engine):
 
 from .gene import Gene
 from .exon import Exon
+from .ontology_term import OntologyTerm
 from .synteny_block import SyntenicBlock

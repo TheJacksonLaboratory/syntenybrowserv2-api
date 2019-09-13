@@ -11,25 +11,26 @@ exons_schema = ns.model('exon', {
 })
 
 genes_schema = ns.model('gene', {
-    'id': fields.String,
-    'taxon_id': fields.Integer,
-    'symbol': fields.String,
-    'chr': fields.String,
-    'start': fields.Integer,
-    'end': fields.Integer,
-    'strand': fields.String,
-    'type': fields.String,
+    'id': fields.String(attribute='gene_id'),
+    'taxon_id': fields.Integer(attribute='gene_taxonid'),
+    'symbol': fields.String(attribute='gene_symbol'),
+    'chr': fields.String(attribute='gene_chr'),
+    'start': fields.Integer(attribute='gene_start_pos'),
+    'end': fields.Integer(attribute='gene_end_pos'),
+    'strand': fields.String(attribute='gene_strand'),
+    'type': fields.String(attribute='gene_type'),
     'exons': fields.List(fields.Nested(exons_schema))
 })
 
 genes_meta_schema = ns.model('gene', {
-    'id': fields.String,
-    'taxon_id': fields.Integer,
-    'symbol': fields.String,
-    'chr': fields.String,
-    'start': fields.Integer,
-    'end': fields.Integer,
-    'strand': fields.String
+    'id': fields.String(attribute='gene_id'),
+    'taxon_id': fields.Integer(attribute='gene_taxonid'),
+    'symbol': fields.String(attribute='gene_symbol'),
+    'chr': fields.String(attribute='gene_chr'),
+    'start': fields.Integer(attribute='gene_start_pos'),
+    'end': fields.Integer(attribute='gene_end_pos'),
+    'strand': fields.String(attribute='gene_strand'),
+    'type': fields.String(attribute='gene_type')
 })
 
 
@@ -56,7 +57,7 @@ class GenesBySpeciesId(Resource):
     @ns.marshal_with(genes_schema, as_list=True)
     def get(self, species_id):
         query = SESSION.query(Gene).filter_by(
-            taxon_id=species_id)
+            gene_taxonid=species_id)
         genes = query.all()
 
         # when empty genes list
@@ -75,11 +76,11 @@ class GenesByChromosome(Resource):
     @ns.marshal_with(genes_schema, as_list=True)
     def get(self, species_id, chromosome):
         query = SESSION.query(Gene).filter_by(
-            taxon_id=species_id,
-            chr=chromosome
+            gene_taxonid=species_id,
+            gene_chr=chromosome
         )
         genes = query.all()
-        print(query)
+
         # when empty genes list
         if not genes:
             abort(400, 'no genes could be returned for the species and chromosome')
@@ -109,7 +110,7 @@ class GenesMetaBySpeciesId(Resource):
     @ns.marshal_with(genes_meta_schema, as_list=True)
     def get(self, species_id):
         query = SESSION.query(Gene).filter_by(
-            taxon_id=species_id)
+            gene_taxonid=species_id)
         genes = query.all()
 
         # when empty genes list
@@ -128,8 +129,8 @@ class GenesMetaByChromosome(Resource):
     @ns.marshal_with(genes_meta_schema, as_list=True)
     def get(self, species_id, chromosome):
         query = SESSION.query(Gene).filter_by(
-            taxon_id=species_id,
-            chr=chromosome
+            gene_taxonid=species_id,
+            gene_chr=chromosome
         )
         genes = query.all()
         # when empty genes list
