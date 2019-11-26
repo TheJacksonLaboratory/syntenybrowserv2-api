@@ -1,6 +1,6 @@
 from flask_restplus import Resource, Namespace, fields, abort
 from sqlalchemy.orm import aliased
-from sqlalchemy import and_
+# from sqlalchemy import and_
 
 from ..model.ontology_term import OntologyTerm
 from ..model.gene import Gene
@@ -22,7 +22,7 @@ class FormatTermData(fields.Raw):
 
 
 # marshalling models
-terms_schema_simple = ns.model('OntologyTerm', {
+terms_schema_simple = ns.model('OntologyTermSimple', {
     'id': fields.String,
     'name': fields.String
 })
@@ -51,7 +51,8 @@ terms_schema = ns.model('OntologyTerm', {
 
 @ns.route('/terms/<string:ontology_prefix>')
 @ns.param('ontology_prefix',
-          'A valid ontology prefix such as GO (Gene Ontology), MP (Mammalian Phenotype), or DOID (Disease Ontology)')
+          'A valid ontology prefix such as GO (Gene Ontology), MP (Mammalian Phenotype), '
+          'or DOID (Disease Ontology)')
 class OntologyTermsById(Resource):
 
     @ns.marshal_with(terms_schema, as_list=True)
@@ -62,13 +63,14 @@ class OntologyTermsById(Resource):
 
         # when the terms list is empty
         if not terms:
-            abort(400, 'no ontology terms could be returned')
+            return []
         return terms, 200
 
 
 @ns.route('/terms/simple/<string:ontology_prefix>')
 @ns.param('ontology_prefix',
-          'A valid ontology prefix such as GO (Gene Ontology), MP (Mammalian Phenotype), or DOID (Disease Ontology)')
+          'A valid ontology prefix such as GO (Gene Ontology), MP (Mammalian Phenotype), '
+          'or DOID (Disease Ontology)')
 class OntologyTermByIdSimple(Resource):
 
     @ns.marshal_with(terms_schema_simple, as_list=True)
@@ -80,7 +82,7 @@ class OntologyTermByIdSimple(Resource):
 
         # when the terms list is empty
         if not terms:
-            abort(400, 'no ontology terms could be returned')
+            return []
         return terms, 200
 
 
@@ -134,5 +136,5 @@ class OntAssocByTaxonAndTerm(Resource):
 
         # when the associations list is empty
         if not genes:
-            abort(400, 'no associations could be returned')
+            return []
         return genes
