@@ -1,4 +1,4 @@
-from flask_restplus import Resource, Namespace, fields, abort
+from flask_restplus import Resource, Namespace, abort, fields
 from sqlalchemy.orm import aliased
 # from sqlalchemy import and_
 
@@ -21,13 +21,13 @@ class FormatTermData(fields.Raw):
         }
 
 
-# marshalling models
-terms_schema_simple = ns.model('OntologyTermSimple', {
+# response serialization schemas
+ONT_TERMS_SCHEMA_SIMPLE = ns.model('OntologyTermSimple', {
     'id': fields.String,
     'name': fields.String
 })
 
-gene_terms_schema = ns.model('Gene', {
+GENE_TERMS_SCHEMA = ns.model('Gene', {
     'id': fields.String(attribute='gene_id'),
     'taxon_id': fields.Integer(attribute='gene_taxonid'),
     'symbol': fields.String(attribute='gene_symbol'),
@@ -40,13 +40,13 @@ gene_terms_schema = ns.model('Gene', {
     'term_name': fields.String(attribute='ontology_term.name')
 })
 
-terms_schema = ns.model('OntologyTerm', {
+ONT_TERMS_SCHEMA = ns.model('OntologyTerm', {
     'id': fields.String,
     'name': fields.String,
     'namespace': fields.String,
     'def': fields.String(attribute='definition'),
-    'descendants': fields.List(FormatTermData())
- })
+    'descendants': fields.List(fields.Nested(ONT_TERMS_SCHEMA_SIMPLE))
+})
 
 
 @ns.route('/terms/<string:ontology_prefix>')
@@ -55,15 +55,21 @@ terms_schema = ns.model('OntologyTerm', {
           'or DOID (Disease Ontology)')
 class OntologyTermsById(Resource):
 
-    @ns.marshal_with(terms_schema, as_list=True)
+    @ns.marshal_with(ONT_TERMS_SCHEMA, as_list=True)
     def get(self, ontology_prefix):
+
         query = SESSION.query(OntologyTerm) \
             .filter(OntologyTerm.id.like(f'{ontology_prefix}%'))
         terms = query.all()
 
-        # when the terms list is empty
+        # no terms found means that the client provided an ontology
+        # prefix that is not valid - the reason for that could be a simple
+        # typo or that the ontology is not supported/available at all.
         if not terms:
-            return []
+            abort(400, message="ERROR: invalid 'ontology_prefix' value. "
+                               "Make sure that the spelling is correct and "
+                               "that the ontology you are interested in, is "
+                               "actually supported/available in the synteny browser.")
         return terms, 200
 
 
@@ -73,16 +79,21 @@ class OntologyTermsById(Resource):
           'or DOID (Disease Ontology)')
 class OntologyTermByIdSimple(Resource):
 
-    @ns.marshal_with(terms_schema_simple, as_list=True)
+    @ns.marshal_with(ONT_TERMS_SCHEMA_SIMPLE, as_list=True)
     def get(self, ontology_prefix):
 
         query = SESSION.query(OntologyTerm) \
             .filter(OntologyTerm.id.like(f'{ontology_prefix}%'))
         terms = query.all()
 
-        # when the terms list is empty
+        # no terms found means that the client provided an ontology
+        # prefix that is not valid - the reason for that could be a simple
+        # typo or that the ontology is not supported/available at all.
         if not terms:
-            return []
+            abort(400, message="ERROR: invalid 'ontology_prefix' value. "
+                               "Make sure that the spelling is correct and "
+                               "that the ontology you are interested in, is "
+                               "actually supported/available in the synteny browser.")
         return terms, 200
 
 
@@ -106,7 +117,7 @@ def do_search(parent, parent_terms):
           'Ontology term ID (eg. GO:0002027)')
 class OntAssocByTaxonAndTerm(Resource):
 
-    @ns.marshal_with(gene_terms_schema, as_list=True)
+    @ns.marshal_with(GENE_TERMS_SCHEMA, as_list=True)
     def get(self, species_id, ont_term_id):
         parent_terms = list()
         parent_terms.append(ont_term_id)
