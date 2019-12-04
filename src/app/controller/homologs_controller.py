@@ -1,7 +1,7 @@
 from flask_restplus import Resource, Namespace, fields, abort
 
 from sqlalchemy import and_
-from ..model import SESSION, Gene, Exon
+from ..model import SESSION, Gene
 
 
 ns = Namespace('homologs', description='Given reference and comparison species IDs, and a chromosome number, returns '
@@ -15,28 +15,28 @@ ns = Namespace('homologs', description='Given reference and comparison species I
 class FormatGeneData(fields.Raw):
     def format(self, o):
         return {
-            'id': o.gene_id,
-            'taxon_id': o.gene_taxonid,
-            'chr': o.gene_chr
+            'id': o.id,
+            'taxon_id': o.taxon_id,
+            'chr': o.chr
         }
 
 
 # marshalling models
 exons_schema = ns.model('exon', {
-    'start': fields.Integer(attribute='exon_start_pos'),
-    'end': fields.Integer(attribute='exon_end_pos')
+    'start': fields.Integer,
+    'end': fields.Integer
 })
 
 
 homologs_schema = ns.model('gene', {
-    'id': fields.String(attribute="gene_id"),
-    'taxon_id': fields.Integer(attribute='gene_taxonid'),
-    'symbol': fields.String(attribute='gene_symbol'),
-    'chr': fields.String(attribute='gene_chr'),
-    'start': fields.Integer(attribute='gene_start_pos'),
-    'end': fields.Integer(attribute='gene_end_pos'),
-    'strand': fields.String(attribute='gene_strand'),
-    'type': fields.String(attribute='gene_type'),
+    'id': fields.String,
+    'taxon_id': fields.Integer,
+    'symbol': fields.String,
+    'chr': fields.String,
+    'start': fields.Integer,
+    'end': fields.Integer,
+    'strand': fields.String,
+    'type': fields.String,
     'exons': fields.List(fields.Nested(exons_schema)),
     'homologs': fields.List(FormatGeneData())
 })
@@ -56,8 +56,8 @@ class HomologsByChromosome(Resource):
         # select all reference species genes,
         # located on the specified chromosome
         genes_list = SESSION.query(Gene)\
-            .filter(and_(Gene.gene_chr == chromosome,
-                         Gene.gene_taxonid == ref_taxonid))\
+            .filter(and_(Gene.chr == chromosome,
+                         Gene.taxon_id == ref_taxonid))\
             .all()
 
         # iterate through the gene list and identify all
@@ -65,8 +65,8 @@ class HomologsByChromosome(Resource):
         homologs_set = set()
         for g in genes_list:
             for h in g.homologs:
-                if h.gene_taxonid == comp_taxonid:
-                    homologs_set.add(h.gene_id)
+                if h.taxon_id == comp_taxonid:
+                    homologs_set.add(h.id)
 
         # the maximum number of host parameters in a single
         # SQL statement in SQLite is 999. Chunk the data so that
@@ -85,7 +85,7 @@ class HomologsByChromosome(Resource):
             # to all reference species genes, located on the specified chromosome
             query = SESSION\
                 .query(Gene)\
-                .filter(and_(Gene.gene_taxonid == comp_taxonid, Gene.gene_id.in_(chunk)))
+                .filter(and_(Gene.taxon_id == comp_taxonid, Gene.id.in_(chunk)))
 
             homologs.extend(query.all())
 

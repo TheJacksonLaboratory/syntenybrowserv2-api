@@ -1,5 +1,5 @@
 from sqlalchemy import *
-from . import BASE, Gene
+from . import BASE
 
 
 class Exon(BASE):
@@ -13,6 +13,6 @@ class Exon(BASE):
     parent_gene = Column(String, ForeignKey('gene.gene_id'), primary_key=True)
     taxonid = Column(Integer)
     exon_chr = Column(String)
-    exon_start_pos = Column(Integer, primary_key=True)
-    exon_end_pos = Column(Integer, primary_key=True)
+    start = Column("exon_start_pos", Integer, primary_key=True)
+    end = Column("exon_end_pos", Integer, primary_key=True)
 

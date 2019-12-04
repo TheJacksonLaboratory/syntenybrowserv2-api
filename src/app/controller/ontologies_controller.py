@@ -22,10 +22,7 @@ GENE_TERMS_SCHEMA = ns.model('Gene', {
     'strand': fields.String,
     'type': fields.String,
     'term_id': fields.String,
-    'term_name': fields.String,
-    # 'ontologies': fields.List(fields.Nested(ONT_TERMS_SCHEMA_SIMPLE))
-    # 'term_id': fields.String(attribute=lambda ot: ot.ontologies[0].id),
-    # 'term_name': fields.String(attribute=lambda ot: ot.ontologies[0].name)
+    'term_name': fields.String
 })
 
 ONT_TERMS_SCHEMA = ns.model('OntologyTerm', {
