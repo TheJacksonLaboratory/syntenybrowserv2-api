@@ -4,7 +4,7 @@ Base classes for use in the testing scripts
 
 # This next line disables checking that attributes are defined outside init
 #   Overriding init for TestCase breaks the library
-#pylint: disable=W0201
+# pylint: disable=W0201
 
 from flask_testing import TestCase, LiveServerTestCase
 from src.app import create_app
@@ -37,9 +37,9 @@ class BaseLiveServerTestCase(LiveServerTestCase):
     __config_name__ = 'test'
 
     def create_app(self):
-        print('check 1')
+
         app = create_app(self.__config_name__)
-        # app.config['LIVESERVER_PORT'] = 8080
+        app.config['LIVESERVER_PORT'] = 0
         app.config['LIVESERVER_TIMEOUT'] = 10
         app.config['PRESERVE_CONTEXT_ON_EXCEPTION'] = False
         self.engine = app.config['db_engine']

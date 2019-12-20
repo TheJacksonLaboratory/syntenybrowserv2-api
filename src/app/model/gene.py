@@ -15,6 +15,8 @@ gene_ontology_map = Table(
 
 
 class Gene(BASE):
+    """ This class represents the 'gene' table. """
+
     __tablename__ = 'gene'
 
     id = Column("gene_id", String, primary_key=True)
@@ -25,6 +27,7 @@ class Gene(BASE):
     end = Column("gene_end_pos", Integer)
     strand = Column("gene_strand", String)
     type = Column("gene_type", String)
+
     exons = relationship('Exon')
     homologs = relationship('Gene', secondary='homolog',
                             primaryjoin='Gene.id == homolog.c.ref_gene_id',
@@ -36,3 +39,6 @@ class Gene(BASE):
                               secondaryjoin='OntologyTerm.id == gene_ontology_map.c.ontology_id',
                               uselist=True
                               )
+    
+    def __repr__(self):
+        return "<Gene:(id='%s', species='%d')>" % (self.id, self.taxon_id)

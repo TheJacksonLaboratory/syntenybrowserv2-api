@@ -3,6 +3,8 @@ from . import BASE
 
 
 class SyntenicBlock(BASE):
+    """ This class represents the 'syntenic_block' table. """
+
     __tablename__ = 'syntenic_block'
 
     ref_taxonid = Column(Integer, primary_key=True)
