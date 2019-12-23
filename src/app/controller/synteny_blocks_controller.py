@@ -1,23 +1,23 @@
 from flask_restplus import Resource, Namespace, fields, abort
-from ..model.synteny_block import SyntenicBlock
-from ..model import SESSION
-from sqlalchemy import and_
+
+from src.app.service.syn_blocks_service import get_blocks_by_species_ids, \
+    get_blocks_by_species_ids_and_reference_chromosome
 
 
 ns = Namespace('blocks', description='Returns information about syntenic block association for all available blocks '
                                      'in the database, based on specific reference and comparison species, as well '
                                      'as a specific chromosome.')
 
-
-blocks_schema = ns.model('SyntenicBlock', {
-    'id': fields.String(attribute='symbol'),
+# response marshalling schemas
+BLOCKS_SCHEMA = ns.model('SyntenicBlock', {
+    'id': fields.String,
     'ref_chr': fields.String,
-    'ref_start': fields.Integer(attribute='ref_start_pos'),
-    'ref_end': fields.Integer(attribute='ref_end_pos'),
+    'ref_start': fields.Integer,
+    'ref_end': fields.Integer,
     'comp_chr': fields.String,
-    'comp_start': fields.Integer(attribute='comp_start_pos'),
-    'comp_end': fields.Integer(attribute='comp_end_pos'),
-    'orientation_matches': fields.Boolean(attribute='same_orientation')
+    'comp_start': fields.Integer,
+    'comp_end': fields.Integer,
+    'orientation_matches': fields.Boolean
 })
 
 
@@ -28,18 +28,20 @@ blocks_schema = ns.model('SyntenicBlock', {
           'NCBI species ID, such as 9606 (H. sapiens), 10090 (M. musculus), etc.')
 class SynBlocks(Resource):
 
-    @ns.marshal_with(blocks_schema, as_list=True)
+    @ns.marshal_with(BLOCKS_SCHEMA, as_list=True)
     def get(self, ref_taxonid, comp_taxonid):
+        """
 
-        query = SESSION.query(SyntenicBlock) \
-            .filter(and_(SyntenicBlock.ref_taxonid == ref_taxonid,
-                         SyntenicBlock.comp_taxonid == comp_taxonid))
-        blocks = query.all()
+        :param ref_taxonid:
+        :param comp_taxonid:
+        :return:
+        """
+        res = get_blocks_by_species_ids(ref_taxonid, comp_taxonid)
 
         # when empty blocks list
-        if not blocks:
+        if not res:
             abort(400, 'no syntenic blocks could be returned')
-        return blocks, 200
+        return res, 200
 
 
 @ns.route('/<int:ref_taxonid>/<int:comp_taxonid>/<chromosome>')
@@ -51,15 +53,18 @@ class SynBlocks(Resource):
           'Chromosome number, including X and Y')
 class SynBlocksChr(Resource):
 
-    @ns.marshal_with(blocks_schema, as_list=True)
+    @ns.marshal_with(BLOCKS_SCHEMA, as_list=True)
     def get(self, ref_taxonid, comp_taxonid, chromosome):
-        query = SESSION.query(SyntenicBlock) \
-            .filter(and_(SyntenicBlock.ref_taxonid == ref_taxonid,
-                         SyntenicBlock.comp_taxonid == comp_taxonid,
-                         SyntenicBlock.ref_chr == chromosome))
-        blocks = query.all()
+        """
+
+        :param ref_taxonid:
+        :param comp_taxonid:
+        :param chromosome:
+        :return:
+        """
+        res = get_blocks_by_species_ids_and_reference_chromosome(ref_taxonid, comp_taxonid, chromosome)
 
         # when empty blocks list
-        if not blocks:
+        if not res:
             abort(400, 'no syntenic blocks could be returned')
-        return blocks, 200
+        return res, 200

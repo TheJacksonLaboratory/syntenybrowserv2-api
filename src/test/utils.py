@@ -55,7 +55,7 @@ def read_test_exons():
     return exons
 
 
-def read_test_synteny_blocks():
+def read_test_blocks_data():
     """
     Reads synteny blocks data for testing from the input file.
 
@@ -63,7 +63,20 @@ def read_test_synteny_blocks():
     """
     syn_blocks = []
 
-    # TODO: 12/19/2019 some logic needs to be added here
+    for block in SYNTENY_BLOCKS_DATA:
+        b = SyntenicBlock(
+            ref_taxonid=block[0],
+            ref_chr=block[1],
+            ref_start=block[2],
+            ref_end=block[3],
+            comp_taxonid=block[4],
+            comp_chr=block[5],
+            comp_start=block[6],
+            comp_end=block[7],
+            orientation_matches=block[8],
+            id=block[9]
+        )
+        syn_blocks.append(b)
 
     return syn_blocks
 
@@ -74,3 +87,7 @@ def delete_genes_test_data():
 
 def delete_exons_test_data():
     SESSION.query(Exon).delete()
+
+
+def delete_blocks_test_data():
+    SESSION.query(SyntenicBlock).delete()

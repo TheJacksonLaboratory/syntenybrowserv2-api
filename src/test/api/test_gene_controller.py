@@ -7,9 +7,7 @@ from src.test.utils import read_test_genes, read_test_exons, \
 
 
 class GeneEndpointsTests(BaseTestCase):
-    """
-    A class to test the /genes endpoint and all its derivatives.
-    """
+    """ A class to test the /genes endpoint and all its derivatives. """
 
     def setUp(self):
         genes = read_test_genes()
