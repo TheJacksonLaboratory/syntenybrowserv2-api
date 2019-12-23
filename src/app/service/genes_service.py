@@ -1,7 +1,20 @@
 from ..model import SESSION, Gene
 
 
-def get_genes():
+def check_species_exists(species_id):
+    # it is possible that the ontology this term belongs to is
+    # not supported/available, in which case a message is returned;
+    query = SESSION.query(Gene).filter_by(
+        taxon_id=species_id)
+    genes = query.all()
+
+    if not genes:
+        return False
+    else:
+        return True
+
+
+def get_all_genes():
     """
     Function that queries the database and returns a list of all Gene objects available.
 
@@ -11,8 +24,6 @@ def get_genes():
 
     genes = query.all()
 
-    if not genes:
-        return {'message': 'No genes could be returned'}
     return genes
 
 
@@ -27,9 +38,6 @@ def get_genes_by_species(species_id):
         taxon_id=species_id)
     genes = query.all()
 
-    # when empty genes list
-    if not genes:
-        return {'message': 'No genes could be returned for the specified species'}
     return genes
 
 
@@ -47,7 +55,5 @@ def get_genes_by_species_chromosome(species_id, chromosome):
     )
     genes = query.all()
 
-    # when empty genes list
-    if not genes:
-        return {'message': 'No genes could be returned for the specified species and chromosome'}
     return genes
+

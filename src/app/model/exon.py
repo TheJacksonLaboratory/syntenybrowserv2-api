@@ -16,3 +16,7 @@ class Exon(BASE):
     exon_chr = Column(String)
     start = Column("exon_start_pos", Integer, primary_key=True)
     end = Column("exon_end_pos", Integer, primary_key=True)
+
+    def __repr__(self):
+        return "<Exon:(gene='%s', species='%d')>" % \
+               (self.parent_gene, self.taxonid)

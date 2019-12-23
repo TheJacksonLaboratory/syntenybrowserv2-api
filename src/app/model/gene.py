@@ -39,6 +39,7 @@ class Gene(BASE):
                               secondaryjoin='OntologyTerm.id == gene_ontology_map.c.ontology_id',
                               uselist=True
                               )
-    
+
     def __repr__(self):
-        return "<Gene:(id='%s', species='%d')>" % (self.id, self.taxon_id)
+        return "<Gene:(id='%s', species='%d')>" % \
+               (self.id, self.taxon_id)

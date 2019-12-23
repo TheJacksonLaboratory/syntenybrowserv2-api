@@ -1,7 +1,7 @@
-from flask_restplus import Resource, Namespace, fields
+from flask_restplus import Resource, Namespace, fields, abort
 
-from src.app.service.genes_service import get_genes, get_genes_by_species, \
-    get_genes_by_species_chromosome
+from src.app.service.genes_service import get_all_genes, get_genes_by_species, \
+    get_genes_by_species_chromosome, check_species_exists
 
 ns = Namespace('genes', description='Returns gene information about all genes '
                                     'available in the database, as well as '
@@ -9,12 +9,12 @@ ns = Namespace('genes', description='Returns gene information about all genes '
                                     'specified species and a chromosome.')
 
 # response marshalling schemas
-EXONS_SCHEMA = ns.model('exon', {
+EXONS_SCHEMA = ns.model('Exon', {
     'start': fields.Integer,
     'end': fields.Integer
 })
 
-GENES_SCHEMA = ns.model('gene', {
+GENES_SCHEMA = ns.model('Gene', {
     'id': fields.String,
     'taxon_id': fields.Integer,
     'symbol': fields.String,
@@ -26,7 +26,7 @@ GENES_SCHEMA = ns.model('gene', {
     'exons': fields.List(fields.Nested(EXONS_SCHEMA))
 })
 
-GENES_META_SCHEMA = ns.model('gene', {
+GENES_META_SCHEMA = ns.model('GeneMeta', {
     'id': fields.String,
     'taxon_id': fields.Integer,
     'symbol': fields.String,
@@ -47,7 +47,12 @@ class Genes(Resource):
         """
         Returns genes data for all available species in the database.
         """
-        return get_genes(), 200
+        res = get_all_genes()
+
+        if not res:
+            message = 'No genes data is available currently in the database.'
+            abort(400, message=message)
+        return res, 200
 
 
 @ns.route('/<int:species_id>', methods=['GET'])
@@ -60,7 +65,13 @@ class GenesBySpeciesId(Resource):
         """
         Returns genes data for the specified species.
         """
-        return get_genes_by_species(species_id), 200
+        res = get_genes_by_species(species_id)
+
+        if not res:
+            message = 'The species with ID: <{}> is not represented in the database ' \
+                    'and thus there is no associated genes data.'.format(species_id)
+            abort(400, message=message)
+        return res, 200
 
 
 @ns.route('/<int:species_id>/<string:chromosome>', methods=['GET'])
@@ -75,7 +86,19 @@ class GenesByChromosome(Resource):
         """
         Returns genes data for the specified species and chromosome.
         """
-        return get_genes_by_species_chromosome(species_id, chromosome), 200
+        res = get_genes_by_species_chromosome(species_id, chromosome)
+
+        if not res:
+            species_exists = check_species_exists(species_id)
+
+            if species_exists:
+                message = 'The species with ID: <{}> is represented in the database, ' \
+                          'but has no associated data for chromosome: <{}>.'.format(species_id, chromosome)
+            else:
+                message = 'The species with ID: <{}> is not represented in the database ' \
+                          'and thus there is no associated genes data.'.format(species_id)
+            abort(400, message=message)
+        return res, 200
 
 
 @ns.route('/metadata', methods=['GET'])
@@ -86,7 +109,12 @@ class GenesMeta(Resource):
         """
         Returns genes meta-data for all available species in the database.
         """
-        return get_genes(), 200
+        res = get_all_genes()
+
+        if not res:
+            message = 'No genes data is available currently in the database.'
+            abort(400, message=message)
+        return res, 200
 
 
 @ns.route('/metadata/<int:species_id>', methods=['GET'])
@@ -99,7 +127,13 @@ class GenesMetaBySpeciesId(Resource):
         """
         Returns genes meta-data for the specified species.
         """
-        return get_genes_by_species(species_id)
+        res = get_genes_by_species(species_id)
+
+        if not res:
+            message = 'The species with ID: <{}> is not represented in the database ' \
+                    'and thus there is no associated genes data.'.format(species_id)
+            abort(400, message=message)
+        return res, 200
 
 
 @ns.route('/metadata/<int:species_id>/<string:chromosome>', methods=['GET'])
@@ -114,4 +148,16 @@ class GenesMetaByChromosome(Resource):
         """
         Returns genes meta-data for the specified species and chromosome.
         """
-        get_genes_by_species_chromosome(species_id, chromosome), 200
+        res = get_genes_by_species_chromosome(species_id, chromosome)
+
+        if not res:
+            species_exists = check_species_exists(species_id)
+
+            if species_exists:
+                message = 'The species with ID: <{}> is represented in the database, ' \
+                          'but has no associated data for chromosome:<{}>.'.format(species_id, chromosome)
+            else:
+                message = 'The species with ID: <{}> is not represented in the database ' \
+                          'and thus there is no associated genes data.'.format(species_id)
+            abort(400, message=message)
+        return res, 200

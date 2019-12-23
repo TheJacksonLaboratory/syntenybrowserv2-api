@@ -21,7 +21,7 @@ class GeneEndpointsTests(BaseTestCase):
 
     # TESTING that endpoints return the correct result number in their response
     # DESCRIPTION: this is to check that each endpoint calls the correct service to produce the results
-    def no_test_get_all_genes(self):
+    def test_get_all_genes(self):
         """
         Return all the genes available in the database.
 
@@ -33,7 +33,7 @@ class GeneEndpointsTests(BaseTestCase):
         self.assert200(response)
         self.assertEqual(len(response.json), expected_number_of_genes)
 
-    def no_test_get_mus_musculus_genes(self):
+    def test_get_mus_musculus_genes(self):
         """
         For a specific species - M. musculus (mouse) - return all genes.
 
@@ -45,7 +45,7 @@ class GeneEndpointsTests(BaseTestCase):
         self.assert200(response)
         self.assertEqual(len(response.json), expected_number_of_genes)
 
-    def no_test_get_homo_sapiens_chr14_genes(self):
+    def test_get_homo_sapiens_chr14_genes(self):
         """
         For a specific species and chromosome - H. sapiens (human), chromosome 14 - return all genes.
 
@@ -88,7 +88,7 @@ class GeneEndpointsTests(BaseTestCase):
         expected_response_objects_properties = [
             'id', 'taxon_id', 'symbol', 'chr', 'start', 'end', 'strand', 'type'
         ]
-        response = self.client.get('api/genes/')
+        response = self.client.get('api/genes/metadata')
 
         self.assert200(response)
         # extract the first object from the returned list and get its keys
@@ -117,26 +117,27 @@ class GeneEndpointsTests(BaseTestCase):
         :return:
         """
         expected_response_object_key = ['message']
-        # 7227 is Drosophila melanogaster's NSBI ID
+        # 7227 is Drosophila melanogaster's NSBI species taxonomy ID
         response = self.client.get('api/genes/7227')
 
-        self.assert200(response)
+        self.assert400(response)
         # the response object should have only one attribute called "message"
-        response_object_key = response.json[0].keys()
+        response_object_key = response.json.keys()
         self.assertCountEqual(response_object_key, expected_response_object_key)
 
-    def test_get_homo_sapiens_chr15_no_results(self):
+    def no_test_get_homo_sapiens_chr15_no_results(self):
         """
         For a specific species (H. sapiens) with a non-existent chromosome (25) return an (error) message.
 
         :return:
         """
         expected_response_object_key = ['message']
+        # there is not chromosome 25 in H. sapiens, so an error message is expected
         response = self.client.get('api/genes/9606/25')
 
-        self.assert200(response)
+        self.assert400(response)
         # the response object should have only one attribute called "message"
-        response_object_key = response.json[0].keys()
+        response_object_key = response.json.keys()
         self.assertCountEqual(response_object_key, expected_response_object_key)
 
     def tearDown(self):

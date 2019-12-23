@@ -12,7 +12,7 @@ ONT_TERMS_SCHEMA_SIMPLE = ns.model('OntologyTermSimple', {
     'name': fields.String
 })
 
-GENE_TERMS_SCHEMA = ns.model('Gene', {
+GENE_TERMS_SCHEMA = ns.model('GeneTerm', {
     'id': fields.String,
     'taxon_id': fields.Integer,
     'symbol': fields.String,

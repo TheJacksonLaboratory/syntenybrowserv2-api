@@ -22,13 +22,13 @@ class FormatGeneData(fields.Raw):
 
 
 # marshalling models
-exons_schema = ns.model('exon', {
+exons_schema = ns.model('Exon', {
     'start': fields.Integer,
     'end': fields.Integer
 })
 
 
-homologs_schema = ns.model('gene', {
+homologs_schema = ns.model('Gene', {
     'id': fields.String,
     'taxon_id': fields.Integer,
     'symbol': fields.String,
