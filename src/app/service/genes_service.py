@@ -2,8 +2,12 @@ from ..model import SESSION, Gene
 
 
 def check_species_exists(species_id):
-    # it is possible that the ontology this term belongs to is
-    # not supported/available, in which case a message is returned;
+    """
+    Returns true if there are genes associated with this species, else returns false.
+
+    :param species_id: the assigned NCBI species taxonomy ID
+    :return: boolean True or False
+    """
     query = SESSION.query(Gene).filter_by(
         taxon_id=species_id)
     genes = query.all()
@@ -18,7 +22,7 @@ def get_all_genes():
     """
     Function that queries the database and returns a list of all Gene objects available.
 
-    :return: genes - a list of Gene objects or a message in case none exists
+    :return: genes - a list of Gene objects or an empty list
     """
     query = SESSION.query(Gene)
 
@@ -32,7 +36,7 @@ def get_genes_by_species(species_id):
     Function that queries the database and returns a list of Gene objects for a specific species.
 
     :param species_id: NCBI species ID, such as 9606 (H. sapiens), 10090 (M. musculus), etc.
-    :return: genes - a list of Gene objects or a message in case none exists
+    :return: genes - a list of Gene objects or an empty list
     """
     query = SESSION.query(Gene).filter_by(
         taxon_id=species_id)
@@ -47,7 +51,7 @@ def get_genes_by_species_chromosome(species_id, chromosome):
 
     :param species_id: NCBI species ID, such as 9606 (H. sapiens), 10090 (M. musculus), etc.
     :param chromosome: reference species chromosome ID
-    :return: genes - a list of Gene objects or a message in case none exists
+    :return: genes - a list of Gene objects or an empty list
     """
     query = SESSION.query(Gene).filter_by(
         taxon_id=species_id,

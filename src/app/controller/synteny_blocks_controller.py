@@ -31,16 +31,16 @@ class SynBlocks(Resource):
     @ns.marshal_with(BLOCKS_SCHEMA, as_list=True)
     def get(self, ref_taxonid, comp_taxonid):
         """
-
-        :param ref_taxonid:
-        :param comp_taxonid:
-        :return:
+        For the specified reference and comparison species returns associated syntenic block data.
         """
         res = get_blocks_by_species_ids(ref_taxonid, comp_taxonid)
 
-        # when empty blocks list
+        # when no empty blocks found
         if not res:
-            abort(400, 'no syntenic blocks could be returned')
+            message = 'No syntenic blocks between species <{}> and <{}> could be found in the database.'\
+                .format(ref_taxonid, comp_taxonid)
+
+            abort(400, message=message)
         return res, 200
 
 
@@ -56,15 +56,14 @@ class SynBlocksChr(Resource):
     @ns.marshal_with(BLOCKS_SCHEMA, as_list=True)
     def get(self, ref_taxonid, comp_taxonid, chromosome):
         """
-
-        :param ref_taxonid:
-        :param comp_taxonid:
-        :param chromosome:
-        :return:
+        For the specified reference and comparison species, and reference chromosome returns associated syntenic blocks.
         """
         res = get_blocks_by_species_ids_and_reference_chromosome(ref_taxonid, comp_taxonid, chromosome)
 
-        # when empty blocks list
+        # when no empty blocks found
         if not res:
-            abort(400, 'no syntenic blocks could be returned')
+            message = 'No syntenic blocks between species <{}> and <{}> on chromosome <{}> could be found in ' \
+                      'the database'.format(ref_taxonid, comp_taxonid, chromosome)
+
+            abort(400, message=message)
         return res, 200
