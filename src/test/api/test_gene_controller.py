@@ -17,7 +17,7 @@ class GeneEndpointsTests(BaseTestCase):
         self.session.bulk_save_objects(exons)
         self.session.commit()
 
-    # TESTING that endpoints return the correct result number in their response
+    # TESTING that the endpoints' responses return the correct number of genes
     # DESCRIPTION: this is to check that each endpoint calls the correct service to produce the results
     def test_get_all_genes(self):
         """
@@ -69,7 +69,7 @@ class GeneEndpointsTests(BaseTestCase):
         response = self.client.get('api/genes/')
 
         self.assert200(response)
-        # extract the first object from the returned list and get its keys
+        # extracts the first object from the returned list and gets its keys
         response_object_properties = response.json[0].keys()
         # using unittest.TestCase.assertCountEqual()
         # instead of unittest.TestCase.assertListEqual()
@@ -98,8 +98,8 @@ class GeneEndpointsTests(BaseTestCase):
                               expected_response_objects_properties)
 
     # TESTING endpoint response when there is no results
-    # DESCRIPTION: this is to check that in cases endpoints will return a message
-    #   rather than an empty list (i.e. [])
+    # DESCRIPTION: this is to check that in such cases the endpoints will return meaningful information with the reason
+    #   rather than an empty list (i.e. []) with no explanation
     def test_get_all_genes_no_results(self):
         """
         To test this case the entire genes table should be empty, which is not possible.
@@ -110,7 +110,7 @@ class GeneEndpointsTests(BaseTestCase):
 
     def test_get_drosophila_melanogaster_genes_no_results(self):
         """
-        For a specific non-existent species - D. melanogaster - return (an error) message that no genes exist.
+        For a specific non-existent species - D. melanogaster - return (an error) message that no genes are available.
 
         :return:
         """
