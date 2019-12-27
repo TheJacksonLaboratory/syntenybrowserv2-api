@@ -1,139 +1,163 @@
 from flask_restplus import Resource, Namespace, fields, abort
-from ..model import SESSION, Gene, Exon
 
+from src.app.service.genes_service import get_all_genes, get_genes_by_species, \
+    get_genes_by_species_chromosome, check_species_exists
 
-ns = Namespace('genes', description='Returns gene information about all genes available in the database, as well as '
-                                    'genes per specified species, and genes per specified species and a chromosome.')
+ns = Namespace('genes', description='Returns gene information about all genes '
+                                    'available in the database, as well as '
+                                    'genes per specified species, and genes per '
+                                    'specified species and a chromosome.')
 
-exons_schema = ns.model('exon', {
-    'start': fields.Integer(attribute='exon_start_pos'),
-    'end': fields.Integer(attribute='exon_end_pos')
+# response marshalling schemas
+EXONS_SCHEMA = ns.model('Exon', {
+    'start': fields.Integer,
+    'end': fields.Integer
 })
 
-genes_schema = ns.model('gene', {
-    'id': fields.String(attribute='gene_id'),
-    'taxon_id': fields.Integer(attribute='gene_taxonid'),
-    'symbol': fields.String(attribute='gene_symbol'),
-    'chr': fields.String(attribute='gene_chr'),
-    'start': fields.Integer(attribute='gene_start_pos'),
-    'end': fields.Integer(attribute='gene_end_pos'),
-    'strand': fields.String(attribute='gene_strand'),
-    'type': fields.String(attribute='gene_type'),
-    'exons': fields.List(fields.Nested(exons_schema))
+GENES_SCHEMA = ns.model('Gene', {
+    'id': fields.String,
+    'taxon_id': fields.Integer,
+    'symbol': fields.String,
+    'chr': fields.String,
+    'start': fields.Integer,
+    'end': fields.Integer,
+    'strand': fields.String,
+    'type': fields.String,
+    'exons': fields.List(fields.Nested(EXONS_SCHEMA))
 })
 
-genes_meta_schema = ns.model('gene', {
-    'id': fields.String(attribute='gene_id'),
-    'taxon_id': fields.Integer(attribute='gene_taxonid'),
-    'symbol': fields.String(attribute='gene_symbol'),
-    'chr': fields.String(attribute='gene_chr'),
-    'start': fields.Integer(attribute='gene_start_pos'),
-    'end': fields.Integer(attribute='gene_end_pos'),
-    'strand': fields.String(attribute='gene_strand'),
-    'type': fields.String(attribute='gene_type')
+GENES_META_SCHEMA = ns.model('GeneMeta', {
+    'id': fields.String,
+    'taxon_id': fields.Integer,
+    'symbol': fields.String,
+    'chr': fields.String,
+    'start': fields.Integer,
+    'end': fields.Integer,
+    'strand': fields.String,
+    'type': fields.String
 })
 
 
-@ns.route('/')
+# API endpoints
+@ns.route('/', methods=['GET'])
 class Genes(Resource):
 
-    @ns.marshal_with(genes_schema, as_list=True)
+    @ns.marshal_with(GENES_SCHEMA, as_list=True)
     def get(self):
-        query = SESSION.query(Gene)
+        """
+        Returns genes data for all available species in the database.
+        """
+        res = get_all_genes()
 
-        genes = query.all()
-
-        # when empty genes list
-        if not genes:
-            abort(400, 'no genes could be returned')
-        return genes, 200
+        if not res:
+            message = 'No genes data is available currently in the database.'
+            abort(400, message=message)
+        return res, 200
 
 
-@ns.route('/<int:species_id>')
+@ns.route('/<int:species_id>', methods=['GET'])
 @ns.param('species_id',
           'NCBI species ID, such as 9606 (H. sapiens), 10090 (M. musculus), etc.')
 class GenesBySpeciesId(Resource):
 
-    @ns.marshal_with(genes_schema, as_list=True)
+    @ns.marshal_with(GENES_SCHEMA, as_list=True)
     def get(self, species_id):
-        query = SESSION.query(Gene).filter_by(
-            gene_taxonid=species_id)
-        genes = query.all()
+        """
+        Returns genes data for the specified species.
+        """
+        res = get_genes_by_species(species_id)
 
-        # when empty genes list
-        if not genes:
-            abort(400, 'no genes could be returned for the specified species')
-        return genes, 200
+        if not res:
+            message = 'The species with ID: <{}> is not represented in the database ' \
+                    'and thus there is no associated genes data.'.format(species_id)
+            abort(400, message=message)
+        return res, 200
 
 
-@ns.route('/<int:species_id>/<string:chromosome>')
+@ns.route('/<int:species_id>/<string:chromosome>', methods=['GET'])
 @ns.param('species_id',
           'NCBI species ID, such as 9606 (H. sapiens), 10090 (M. musculus), etc.')
 @ns.param('chromosome',
           'Reference species chromosome ID')
 class GenesByChromosome(Resource):
 
-    @ns.marshal_with(genes_schema, as_list=True)
+    @ns.marshal_with(GENES_SCHEMA, as_list=True)
     def get(self, species_id, chromosome):
-        query = SESSION.query(Gene).filter_by(
-            gene_taxonid=species_id,
-            gene_chr=chromosome
-        )
-        genes = query.all()
+        """
+        Returns genes data for the specified species and chromosome.
+        """
+        res = get_genes_by_species_chromosome(species_id, chromosome)
 
-        # when empty genes list
-        if not genes:
-            abort(400, 'no genes could be returned for the species and chromosome')
-        return genes, 200
+        if not res:
+            species_exists = check_species_exists(species_id)
+
+            if species_exists:
+                message = 'The species with ID: <{}> is represented in the database, ' \
+                          'but has no associated data for chromosome: <{}>.'.format(species_id, chromosome)
+            else:
+                message = 'The species with ID: <{}> is not represented in the database ' \
+                          'and thus there is no associated genes data.'.format(species_id)
+            abort(400, message=message)
+        return res, 200
 
 
-@ns.route('/metadata')
+@ns.route('/metadata', methods=['GET'])
 class GenesMeta(Resource):
 
-    @ns.marshal_with(genes_meta_schema, as_list=True)
+    @ns.marshal_with(GENES_META_SCHEMA, as_list=True)
     def get(self):
-        query = SESSION.query(Gene)
+        """
+        Returns genes meta-data for all available species in the database.
+        """
+        res = get_all_genes()
 
-        genes = query.all()
-
-        # when empty genes list
-        if not genes:
-            abort(400, 'no genes could be returned')
-        return genes, 200
+        if not res:
+            message = 'No genes data is available currently in the database.'
+            abort(400, message=message)
+        return res, 200
 
 
-@ns.route('/metadata/<int:species_id>')
+@ns.route('/metadata/<int:species_id>', methods=['GET'])
 @ns.param('species_id',
           'NCBI species ID, such as 9606 (H. sapiens), 10090 (M. musculus), etc.')
 class GenesMetaBySpeciesId(Resource):
 
-    @ns.marshal_with(genes_meta_schema, as_list=True)
+    @ns.marshal_with(GENES_META_SCHEMA, as_list=True)
     def get(self, species_id):
-        query = SESSION.query(Gene).filter_by(
-            gene_taxonid=species_id)
-        genes = query.all()
+        """
+        Returns genes meta-data for the specified species.
+        """
+        res = get_genes_by_species(species_id)
 
-        # when empty genes list
-        if not genes:
-            abort(400, 'no genes could be returned for the specified species')
-        return genes, 200
+        if not res:
+            message = 'The species with ID: <{}> is not represented in the database ' \
+                    'and thus there is no associated genes data.'.format(species_id)
+            abort(400, message=message)
+        return res, 200
 
 
-@ns.route('/metadata/<int:species_id>/<string:chromosome>')
+@ns.route('/metadata/<int:species_id>/<string:chromosome>', methods=['GET'])
 @ns.param('species_id',
           'NCBI species ID, such as 9606 (H. sapiens), 10090 (M. musculus), etc.')
 @ns.param('chromosome',
           'Reference species chromosome ID')
 class GenesMetaByChromosome(Resource):
 
-    @ns.marshal_with(genes_meta_schema, as_list=True)
+    @ns.marshal_with(GENES_META_SCHEMA, as_list=True)
     def get(self, species_id, chromosome):
-        query = SESSION.query(Gene).filter_by(
-            gene_taxonid=species_id,
-            gene_chr=chromosome
-        )
-        genes = query.all()
-        # when empty genes list
-        if not genes:
-            abort(400, 'no genes could be returned for the species and chromosome')
-        return genes, 200
+        """
+        Returns genes meta-data for the specified species and chromosome.
+        """
+        res = get_genes_by_species_chromosome(species_id, chromosome)
+
+        if not res:
+            species_exists = check_species_exists(species_id)
+
+            if species_exists:
+                message = 'The species with ID: <{}> is represented in the database, ' \
+                          'but has no associated data for chromosome:<{}>.'.format(species_id, chromosome)
+            else:
+                message = 'The species with ID: <{}> is not represented in the database ' \
+                          'and thus there is no associated genes data.'.format(species_id)
+            abort(400, message=message)
+        return res, 200

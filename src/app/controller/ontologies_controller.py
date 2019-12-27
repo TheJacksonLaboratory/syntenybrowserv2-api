@@ -1,6 +1,4 @@
-from flask_restplus import Resource, Namespace, fields, abort
-from sqlalchemy.orm import aliased
-from sqlalchemy import and_
+from flask_restplus import Resource, Namespace, abort, fields
 
 from ..model.ontology_term import OntologyTerm
 from ..model.gene import Gene
@@ -8,79 +6,79 @@ from ..model import SESSION
 
 ns = Namespace('ontologies', description='Returns information about ontology and ontology associations.')
 
-
-# Class FormatGeneData does only pseudo-formatting. This is needed because
-# using fields.List(fields.Nested(gene_schema) results in
-# 'RecursionError: maximum recursion depth exceeded'. In future, if actual
-# formatting of the returned values is needed, the format function can be updated
-class FormatTermData(fields.Raw):
-    def format(self, o):
-        return {
-            'id': o.id,
-            'name': o.name
-        }
-
-
-# marshalling models
-terms_schema_simple = ns.model('OntologyTerm', {
+# response serialization schemas
+ONT_TERMS_SCHEMA_SIMPLE = ns.model('OntologyTermSimple', {
     'id': fields.String,
     'name': fields.String
 })
 
-gene_terms_schema = ns.model('Gene', {
-    'id': fields.String(attribute='gene_id'),
-    'taxon_id': fields.Integer(attribute='gene_taxonid'),
-    'symbol': fields.String(attribute='gene_symbol'),
-    'chr': fields.String(attribute='gene_chr'),
-    'start': fields.Integer(attribute='gene_start_pos'),
-    'end': fields.Integer(attribute='gene_end_pos'),
-    'strand': fields.String(attribute='gene_strand'),
-    'type': fields.String(attribute='gene_type'),
-    'term_id': fields.String(attribute='ontology_term.id'),
-    'term_name': fields.String(attribute='ontology_term.name')
+GENE_TERMS_SCHEMA = ns.model('GeneTerm', {
+    'id': fields.String,
+    'taxon_id': fields.Integer,
+    'symbol': fields.String,
+    'chr': fields.String,
+    'start': fields.Integer,
+    'end': fields.Integer,
+    'strand': fields.String,
+    'type': fields.String,
+    'term_id': fields.String,
+    'term_name': fields.String
 })
 
-terms_schema = ns.model('OntologyTerm', {
+ONT_TERMS_SCHEMA = ns.model('OntologyTerm', {
     'id': fields.String,
     'name': fields.String,
     'namespace': fields.String,
     'def': fields.String(attribute='definition'),
-    'descendants': fields.List(FormatTermData())
- })
+    'descendants': fields.List(fields.Nested(ONT_TERMS_SCHEMA_SIMPLE))
+})
 
 
 @ns.route('/terms/<string:ontology_prefix>')
 @ns.param('ontology_prefix',
-          'A valid ontology prefix such as GO (Gene Ontology), MP (Mammalian Phenotype), or DOID (Disease Ontology)')
+          'A valid ontology prefix such as GO (Gene Ontology), MP (Mammalian Phenotype), '
+          'or DOID (Disease Ontology)')
 class OntologyTermsById(Resource):
 
-    @ns.marshal_with(terms_schema, as_list=True)
+    @ns.marshal_with(ONT_TERMS_SCHEMA, as_list=True)
     def get(self, ontology_prefix):
+
         query = SESSION.query(OntologyTerm) \
             .filter(OntologyTerm.id.like(f'{ontology_prefix}%'))
         terms = query.all()
 
-        # when the terms list is empty
+        # no terms found means that the client provided an ontology
+        # prefix that is not valid - the reason for that could be a simple
+        # typo or that the ontology is not supported/available at all.
         if not terms:
-            abort(400, 'no ontology terms could be returned')
+            abort(400, message="ERROR: invalid 'ontology_prefix' value. "
+                               "Make sure that the spelling is correct and "
+                               "that the ontology you are interested in, is "
+                               "actually available in the synteny browser.")
         return terms, 200
 
 
 @ns.route('/terms/simple/<string:ontology_prefix>')
 @ns.param('ontology_prefix',
-          'A valid ontology prefix such as GO (Gene Ontology), MP (Mammalian Phenotype), or DOID (Disease Ontology)')
+          'A valid ontology prefix such as GO (Gene Ontology), MP (Mammalian Phenotype), '
+          'or DOID (Disease Ontology)')
 class OntologyTermByIdSimple(Resource):
 
-    @ns.marshal_with(terms_schema_simple, as_list=True)
+    @ns.marshal_with(ONT_TERMS_SCHEMA_SIMPLE, as_list=True)
     def get(self, ontology_prefix):
 
         query = SESSION.query(OntologyTerm) \
             .filter(OntologyTerm.id.like(f'{ontology_prefix}%'))
         terms = query.all()
 
-        # when the terms list is empty
+        # no terms found means that the client provided an ontology
+        # prefix that is not valid - the reason for that could be a simple
+        # typo or that the ontology is not supported/available at all.
         if not terms:
-            abort(400, 'no ontology terms could be returned')
+            abort(400, message="ERROR: invalid 'ontology_prefix' value. "
+                               "Make sure that the spelling is correct and "
+                               "that the ontology you are interested in, is "
+                               "actually available in the synteny browser.")
         return terms, 200
 
 
@@ -104,35 +102,74 @@ def do_search(parent, parent_terms):
           'Ontology term ID (eg. GO:0002027)')
 class OntAssocByTaxonAndTerm(Resource):
 
-    @ns.marshal_with(gene_terms_schema, as_list=True)
+    @ns.marshal_with(GENE_TERMS_SCHEMA, as_list=True)
     def get(self, species_id, ont_term_id):
-        parent_terms = list()
-        parent_terms.append(ont_term_id)
+        # it is possible that the ontology this term belongs to is
+        # not supported/available, in which case a message is returned;
+        # in case that the ontology is supported, but no gene data exist
+        # for that particular ontology term, then an empty list is returned
 
-        query = SESSION.query(OntologyTerm)\
-            .filter(OntologyTerm.id == ont_term_id)
+        # get the ontology prefix from the ontology term
+        ontology_prefix = ont_term_id.split(":")[0]
 
-        terms = query.all()
+        # check whether there is at least one record from that ontology,
+        # which will indicate that this ontology is actually available.
+        q = SESSION.query(OntologyTerm.id) \
+            .filter(OntologyTerm.id.like(f'{ontology_prefix}%'))
+        count = q.count()
 
-        for t in terms:
-            for descendant in t.descendants:
-                parent_terms.append(descendant.id)
+        if count < 1:
+            abort(400, message="ERROR: invalid 'ontology_prefix' value. "
+                               "Make sure that the spelling is correct and "
+                               "that the ontology you are interested in, is "
+                               "actually available in the synteny browser.")
+        else:
+            # it is possible that the search ontology term the clients sends
+            # is very general and it could slow down the response processing;
+            # in such cases a message will be returned instead, asking the client
+            # to use a more specific term.
+            max_allowed_genes = 500
 
-        n = len(parent_terms)
+            # find all 'ont_term_id' ancestors - children, grandchildren, so on...
+            parent_terms = list()
+            parent_terms.append(ont_term_id)
 
-        # get all descendants
-        for i in range(0, n):
-            do_search(parent_terms[i], parent_terms)
+            terms = SESSION.query(OntologyTerm)\
+                .filter(OntologyTerm.id == ont_term_id).all()
 
-        all_terms = list(set(parent_terms))
+            for t in terms:
+                for descendant in t.descendants:
+                    parent_terms.append(descendant.id)
 
-        aliased_ont_term = aliased(OntologyTerm, name="aliased_ont_term")
-        genes = SESSION.query(Gene).join(Gene.ontology_term)\
-            .join(aliased_ont_term)\
-            .filter(aliased_ont_term.id.in_(all_terms))\
-            .filter(Gene.gene_taxonid == species_id).all()
+            n = len(parent_terms)
 
-        # when the associations list is empty
-        if not genes:
-            abort(400, 'no associations could be returned')
-        return genes
+            # get all descendants
+            for i in range(0, n):
+                do_search(parent_terms[i], parent_terms)
+            # all_terms: list containing the search term and
+            # all of its children, grandchildren, and so on..
+            all_terms = list(set(parent_terms))
+
+            genes = SESSION.query(Gene)\
+                .filter(Gene.taxon_id == species_id)\
+                .filter(Gene.ontologies.any(OntologyTerm.id.in_(all_terms)))\
+                .all()
+
+            if len(genes) > max_allowed_genes:
+                abort(400, message="WARNING: the ontology term ID in your request is too general, "
+                                   "which causes processing and response slow down due to the "
+                                   "large number of results found. Please consider using a more specific "
+                                   "ontology term ID and then try to send your request again.")
+            else:
+                # iterates through all the selected genes
+                # and for each gene adds two new properties: 'term_id' and 'term_name'
+                for gene in genes:
+                    for ont in gene.ontologies:
+                        if ont.id in all_terms:
+                            gene.term_id = ont.id
+                            gene.term_name = ont.name
+
+            # when the associations list is empty
+            if not genes:
+                return []
+            return genes
