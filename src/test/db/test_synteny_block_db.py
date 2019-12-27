@@ -1,13 +1,14 @@
-"""
-Tests related to synteny blocks data availability, creation, and interaction
-"""
+""" Tests related to SyntenyBlock data availability, creation, and interaction """
 
 import unittest
+
 from flask_restplus import marshal
-from src.app.controller.synteny_blocks_controller import blocks_schema
+from sqlalchemy import and_
 from src.test import BaseDBTestCase
-from src.test.test_data import SYNTENY_BLOCKS_DATA
-from src.app.model.synteny_block import SyntenicBlock
+from src.app.controller.synteny_blocks_controller import BLOCKS_SCHEMA
+from src.app.model import SESSION, SyntenicBlock
+from src.test.utils import read_test_blocks_data, delete_blocks_test_data
+from src.test.data.synteny_blocks_data import SYNTENY_BLOCKS_DATA
 
 
 class DBConnectionTest(BaseDBTestCase):
@@ -23,69 +24,66 @@ class SyntenyBlockModelTest(BaseDBTestCase):
     """ Test interacting with the provided Synteny Block SqlAlchemy definition """
 
     def setUp(self):
-        blocks = []
-
-        for block in SYNTENY_BLOCKS_DATA:
-            print(block[8])
-
-            blocks.append(SyntenicBlock(
-                ref_taxonid=block[0],
-                ref_chr=block[1],
-                ref_start_pos=block[2],
-                ref_end_pos=block[3],
-                comp_taxonid=block[4],
-                comp_chr=block[5],
-                comp_start_pos=block[6],
-                comp_end_pos=block[7],
-                same_orientation=block[8],
-                symbol=block[9]
-            ))
+        blocks = read_test_blocks_data()
 
         self.session.bulk_save_objects(blocks)
         self.session.commit()
 
-    def test_get_synteny_blocks(self):
-        """ Test getting back all entries """
-
-        blocks = SyntenicBlock.query.all()
+    def test_get_all_synteny_blocks(self):
+        """ Test getting back all SyntenyBlock entries """
+        blocks = SESSION.query(SyntenicBlock).all()
         self.assertTrue(len(blocks) == len(SYNTENY_BLOCKS_DATA))
+
         for i, block in enumerate(blocks):
-            serialized = marshal(block, blocks_schema)
-            self.assertTrue(serialized['id'] in SYNTENY_BLOCKS_DATA[i][9])
+            serialized = marshal(block, BLOCKS_SCHEMA)
+            self.assertTrue(serialized['id']
+                            in SYNTENY_BLOCKS_DATA[i][9])
 
-    def test_get_synteny_block_by_taxon_ids(self):
+    def test_get_synteny_block_by_species_ids(self):
         """ Test getting back entries by reference and comparison species IDs """
+        ref_taxonid = SYNTENY_BLOCKS_DATA[0][0]
+        comp_taxonid = SYNTENY_BLOCKS_DATA[0][4]
 
-        blocks = SyntenicBlock.query.filter(
-            SyntenicBlock.ref_taxonid == 10090,
-            SyntenicBlock.comp_taxonid == 9606
-        ).all()
-        self.assertEqual(len(blocks), 3)
+        block = SESSION.query(SyntenicBlock)\
+            .filter(and_(SyntenicBlock.ref_taxonid == ref_taxonid,
+                         SyntenicBlock.comp_taxonid == comp_taxonid))\
+            .first()
+
+        self.assertIsNotNone(block)
+        self.assertEqual(block.id, SYNTENY_BLOCKS_DATA[0][9])
 
     def test_get_synteny_blocks_by_taxon_ids_chromosome(self):
         """ Test getting back entries by reference and comparison species IDs, and a reference species chromosome """
+        ref_taxonid = SYNTENY_BLOCKS_DATA[4][0]
+        ref_chromosome = SYNTENY_BLOCKS_DATA[4][1]
 
-        blocks = SyntenicBlock.query.filter(
-            SyntenicBlock.ref_taxonid == 10090,
-            SyntenicBlock.comp_taxonid == 9606,
-            SyntenicBlock.ref_chr == '12'
-        ).all()
-        self.assertEqual(len(blocks), 1)
+        comp_taxonid = SYNTENY_BLOCKS_DATA[4][4]
+
+        block = SESSION.query(SyntenicBlock) \
+            .filter(and_(SyntenicBlock.ref_taxonid == ref_taxonid,
+                         SyntenicBlock.comp_taxonid == comp_taxonid,
+                         SyntenicBlock.ref_chr == ref_chromosome)) \
+            .first()
+
+        self.assertIsNotNone(block)
+        self.assertEqual(block.id, SYNTENY_BLOCKS_DATA[4][9])
 
     def test_query_nonexistent_reference_species(self):
         """ Test that getting data for non-existent reference species has no result """
 
-        non_existent_species_id = 5388
+        # 7227 is Drosophila melanogaster's NSBI species taxonomy ID
+        ref_taxonid = 7227
+        comp_taxonid = SYNTENY_BLOCKS_DATA[4][4]
 
-        blocks = SyntenicBlock.query.filter(
-            SyntenicBlock.ref_taxonid == non_existent_species_id,
-            SyntenicBlock.comp_taxonid == 9606
-        ).all()
+        block = SESSION.query(SyntenicBlock) \
+            .filter(and_(SyntenicBlock.ref_taxonid == ref_taxonid,
+                         SyntenicBlock.comp_taxonid == comp_taxonid)) \
+            .first()
 
-        self.assertTrue(blocks == [])
+        self.assertIsNone(block)
 
     def tearDown(self):
-        SyntenicBlock.query.delete()
+        delete_blocks_test_data()
         self.session.commit()
         self.session.remove()
 
