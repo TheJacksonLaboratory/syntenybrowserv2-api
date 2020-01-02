@@ -1,7 +1,8 @@
 from flask_restplus import Resource, Namespace, fields, abort
 
-from sqlalchemy import and_
-from ..model import SESSION, Gene
+from src.app.service.homologs_service import \
+    get_homologs_by_species_ids_and_reference_chromosome
+from src.app.utils.common import check_species_exists, check_chromosome_exists
 
 
 ns = Namespace('homologs', description='Given reference and comparison species IDs, and a chromosome number, returns '
@@ -22,13 +23,13 @@ class FormatGeneData(fields.Raw):
 
 
 # marshalling models
-exons_schema = ns.model('Exon', {
+EXONS_SCHEMA = ns.model('HomologExons', {
     'start': fields.Integer,
     'end': fields.Integer
 })
 
 
-homologs_schema = ns.model('Gene', {
+HOMOLOGS_SCHEMA = ns.model('HomologGenes', {
     'id': fields.String,
     'taxon_id': fields.Integer,
     'symbol': fields.String,
@@ -37,7 +38,7 @@ homologs_schema = ns.model('Gene', {
     'end': fields.Integer,
     'strand': fields.String,
     'type': fields.String,
-    'exons': fields.List(fields.Nested(exons_schema)),
+    'exons': fields.List(fields.Nested(EXONS_SCHEMA)),
     'homologs': fields.List(FormatGeneData())
 })
 
@@ -51,45 +52,37 @@ class HomologsByChromosome(Resource):
               'NCBI species ID, such as 9606 (H. sapiens), 10090 (M. musculus), etc.')
     @ns.param('chromosome',
               'Chromosome number, including X and Y')
-    @ns.marshal_with(homologs_schema, as_list=True)
+    @ns.marshal_with(HOMOLOGS_SCHEMA, as_list=True)
     def get(self, ref_taxonid, comp_taxonid, chromosome):
-        # select all reference species genes,
-        # located on the specified chromosome
-        genes_list = SESSION.query(Gene)\
-            .filter(and_(Gene.chr == chromosome,
-                         Gene.taxon_id == ref_taxonid))\
-            .all()
+        res = get_homologs_by_species_ids_and_reference_chromosome(
+            ref_taxonid,
+            comp_taxonid,
+            chromosome)
 
-        # iterate through the gene list and identify all
-        # homologs that belong to the comparison species
-        homologs_set = set()
-        for g in genes_list:
-            for h in g.homologs:
-                if h.taxon_id == comp_taxonid:
-                    homologs_set.add(h.id)
-
-        # the maximum number of host parameters in a single
-        # SQL statement in SQLite is 999. Chunk the data so that
-        # the request does not result in 'sqlite.OperationalError: too many SQL variables'
-        sqlite_max_variable_num = 999
-        # convert the set to list (since lists can be indexed)
-        homologs_list = list(homologs_set)
-        chunks = [homologs_list[x:x + sqlite_max_variable_num - 1]
-                  for x in range(0, len(homologs_list), sqlite_max_variable_num - 1)]
-
-        homologs = []  # homologs list
-
-        for chunk in chunks:
-            # select all (homolog) genes: these are all comparison species
-            #  genes, which are located on various chromosomes and are homologs
-            # to all reference species genes, located on the specified chromosome
-            query = SESSION\
-                .query(Gene)\
-                .filter(and_(Gene.taxon_id == comp_taxonid, Gene.id.in_(chunk)))
-
-            homologs.extend(query.all())
-
-        # when the list is empty
-        if not homologs:
-            abort(400, 'no homologs could be returned for the specified species and chromosome')
-        return homologs, 200
+        if not res:
+            # check that the reference species are available in the application
+            ref_species_exists = check_species_exists(ref_taxonid)
+            if ref_species_exists is False:
+                message = 'The species with ID: <{}> is not represented in the database ' \
+                          'and thus there is no associated genes data.'.format(ref_taxonid)
+                abort(400, message=message)
+            else:
+                # check that the comparison species are available in the application
+                comp_species_exists = check_species_exists(comp_taxonid)
+                if comp_species_exists is False:
+                    message = 'The species with ID: <{}> is not represented in the database ' \
+                              'and thus there is no associated genes data.'.format(comp_taxonid)
+                    abort(400, message=message)
+                else:
+                    # check that the reference chromosome is valid (for that species)
+                    chromosome_exists = check_chromosome_exists(ref_taxonid, chromosome)
+                    if chromosome_exists is False:
+                        message = 'The species with ID: <{}> does not have chromosome: <{}>'\
+                            .format(ref_taxonid, chromosome)
+                        abort(400, message=message)
+                    else:
+                        # reference and comparison species data are available in the application
+                        # and the reference chromosome is valid, but there is no homologs between
+                        # the species for that chromosome, then an empty list is returned
+                        return res, 200
+        return res, 200

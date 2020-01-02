@@ -1,21 +1,4 @@
-from ..model import SESSION, Gene
-
-
-def check_species_exists(species_id):
-    """
-    Returns true if there are genes associated with this species, else returns false.
-
-    :param species_id: the assigned NCBI species taxonomy ID
-    :return: boolean True or False
-    """
-    query = SESSION.query(Gene).filter_by(
-        taxon_id=species_id)
-    genes = query.all()
-
-    if not genes:
-        return False
-    else:
-        return True
+from src.app.model import SESSION, Gene
 
 
 def get_all_genes():
@@ -60,4 +43,3 @@ def get_genes_by_species_chromosome(species_id, chromosome):
     genes = query.all()
 
     return genes
-

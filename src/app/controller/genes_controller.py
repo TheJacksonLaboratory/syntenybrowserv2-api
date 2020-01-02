@@ -1,7 +1,8 @@
 from flask_restplus import Resource, Namespace, fields, abort
 
 from src.app.service.genes_service import get_all_genes, get_genes_by_species, \
-    get_genes_by_species_chromosome, check_species_exists
+    get_genes_by_species_chromosome
+from src.app.utils.common import check_species_exists
 
 ns = Namespace('genes', description='Returns gene information about all genes '
                                     'available in the database, as well as '
