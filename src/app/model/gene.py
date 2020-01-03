@@ -2,7 +2,7 @@ from sqlalchemy import *
 from sqlalchemy.orm import relationship
 from . import BASE
 
-# [gik 1/3/2020] keep the block below until v2 public release;
+# [gik 1/3/2020] keep the commented block below until v2 public release;
 # [gik 1/3/2020] it is an alternative/previous approach to get gene's homologs,
 # [gik 1/3/2020] which got replaced when the Homolog model was added
 # homolog = Table(
@@ -32,7 +32,7 @@ class Gene(BASE):
     type = Column("gene_type", String)
 
     exons = relationship('Exon')
-    # [gik 1/3/2020] keep the block below until v2 public release;
+    # [gik 1/3/2020] keep the commented block below until v2 public release;
     # [gik 1/3/2020] it is an alternative/previous approach to get gene's homologs,
     # [gik 1/3/2020] which got replaced when the Homolog model was added
     # homologs = relationship('Gene', secondary='homolog',
