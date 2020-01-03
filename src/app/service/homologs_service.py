@@ -40,8 +40,10 @@ def get_homologs_by_species_ids_and_reference_chromosome(ref_taxonid, comp_taxon
 
     for chunk in chunks:
         # select all (homolog) genes: these are all comparison species
-        #  genes, which are located on various chromosomes and are homologs
+        # genes, which are located on various chromosomes and are homologs
         # to all reference species genes, located on the specified chromosome
+        # TODO: [1/3/2020 gik] consider using the Homolog table for the comparison genes information, rather than Gene
+        # TODO: [1/3/2020 gik] it is possible that the Gene table doesn't have entry for the comparison gene(s)
         query = SESSION \
             .query(Gene) \
             .filter(and_(Gene.taxon_id == comp_taxonid, Gene.id.in_(chunk)))\

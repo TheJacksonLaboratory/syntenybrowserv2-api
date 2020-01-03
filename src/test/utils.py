@@ -6,6 +6,7 @@ from src.test.data.synteny_blocks_data import SYNTENY_BLOCKS_DATA
 
 from src.app.model.gene import Gene
 from src.app.model.exon import Exon
+from src.app.model.homolog import Homolog
 from src.app.model.synteny_block import SyntenicBlock
 
 
@@ -13,7 +14,7 @@ def read_test_genes():
     """
     Reads genes data for testing from the input file.
 
-    :return: list of Gene objects that can be used for testing purposes
+    :return: list of Gene objects, which can be used for testing purposes
     """
     genes = []
 
@@ -37,7 +38,7 @@ def read_test_exons():
     """
     Reads exons data for testing from the input file.
 
-    :return: Exon objects list that can be used for testing purposes
+    :return: list of Exon objects, which can be used for testing purposes
     """
     exons = []
 
@@ -53,6 +54,37 @@ def read_test_exons():
             exons.append(e)
 
     return exons
+
+
+def read_test_homologs():
+    """
+    Reads homolog data for testing from the input file.
+
+    :return: list of Homolog objects, which can be used for testing purposes
+    """
+    homologs = []
+
+    for gene in GENES_DATA:
+        for homolog in gene[9]:
+            h = Homolog(
+                ref_gene_id=homolog[0],
+                ref_gene_sym=homolog[1],
+                ref_taxon_id=homolog[2],
+                ref_seq_id=homolog[3],
+                ref_start=homolog[4],
+                ref_end=homolog[5],
+                ref_strand=homolog[6],
+                id=homolog[7],
+                comp_gene_sym=homolog[8],
+                taxon_id=homolog[9],
+                chr=homolog[10],
+                comp_start=homolog[11],
+                comp_end=homolog[12],
+                comp_strand=homolog[13]
+            )
+            homologs.append(h)
+
+    return homologs
 
 
 def read_test_blocks_data():
@@ -87,6 +119,10 @@ def delete_genes_test_data():
 
 def delete_exons_test_data():
     SESSION.query(Exon).delete()
+
+
+def delete_homologs_test_data():
+    SESSION.query(Homolog).delete()
 
 
 def delete_blocks_test_data():
