@@ -25,7 +25,7 @@ class GeneEndpointsTests(BaseTestCase):
 
         :return:
         """
-        expected_number_of_genes = 9
+        expected_number_of_genes = 10
         response = self.client.get('/api/genes/')
 
         self.assert200(response)
@@ -37,7 +37,7 @@ class GeneEndpointsTests(BaseTestCase):
 
         :return:
         """
-        expected_number_of_genes = 5
+        expected_number_of_genes = 6
         response = self.client.get('api/genes/10090')
 
         self.assert200(response)
