@@ -2,7 +2,7 @@
 import unittest
 
 from src.test import BaseTestCase
-from src.test.utils import read_test_genes, read_test_exons, \
+from src.test.utils import read_test_genes_data, read_test_exons_data, \
     delete_exons_test_data, delete_genes_test_data
 
 
@@ -10,8 +10,8 @@ class GeneEndpointsTests(BaseTestCase):
     """ A class to test the /genes endpoint and all its derivatives. """
 
     def setUp(self):
-        genes = read_test_genes()
-        exons = read_test_exons()
+        genes = read_test_genes_data()
+        exons = read_test_exons_data()
 
         self.session.bulk_save_objects(genes)
         self.session.bulk_save_objects(exons)

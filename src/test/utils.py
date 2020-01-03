@@ -10,7 +10,7 @@ from src.app.model.homolog import Homolog
 from src.app.model.synteny_block import SyntenicBlock
 
 
-def read_test_genes():
+def read_test_genes_data():
     """
     Reads genes data for testing from the input file.
 
@@ -34,7 +34,7 @@ def read_test_genes():
     return genes
 
 
-def read_test_exons():
+def read_test_exons_data():
     """
     Reads exons data for testing from the input file.
 
@@ -56,7 +56,7 @@ def read_test_exons():
     return exons
 
 
-def read_test_homologs():
+def read_test_homologs_data():
     """
     Reads homolog data for testing from the input file.
 
