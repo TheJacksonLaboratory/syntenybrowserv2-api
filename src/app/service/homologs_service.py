@@ -44,7 +44,8 @@ def get_homologs_by_species_ids_and_reference_chromosome(ref_taxonid, comp_taxon
         # to all reference species genes, located on the specified chromosome
         query = SESSION \
             .query(Gene) \
-            .filter(and_(Gene.taxon_id == comp_taxonid, Gene.id.in_(chunk)))
+            .filter(and_(Gene.taxon_id == comp_taxonid, Gene.id.in_(chunk)))\
+            .order_by(Gene.id)
 
         homologs.extend(query.all())
 

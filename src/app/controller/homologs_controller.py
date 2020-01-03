@@ -8,28 +8,20 @@ from src.app.utils.common import check_species_exists, check_chromosome_exists
 ns = Namespace('homologs', description='Given reference and comparison species IDs, and a chromosome number, returns '
                'all homologs matched to genes on the specified chromosome in the reference species')
 
+# marshalling schemas
+HOMOLOGS_SCHEMA = ns.model('Homologs', {
+    'id': fields.String,
+    'taxon_id': fields.Integer,
+    'chr': fields.String
+})
 
-# Class FormatGeneData does only pseudo-formatting. This is needed because
-# using fields.List(fields.Nested(gene_schema) results in
-# 'RecursionError: maximum recursion depth exceeded'. In future, if actual
-# formatting of the returned values is needed, the format function can be updated
-class FormatGeneData(fields.Raw):
-    def format(self, o):
-        return {
-            'id': o.id,
-            'taxon_id': o.taxon_id,
-            'chr': o.chr
-        }
-
-
-# marshalling models
 EXONS_SCHEMA = ns.model('HomologExons', {
     'start': fields.Integer,
     'end': fields.Integer
 })
 
 
-HOMOLOGS_SCHEMA = ns.model('HomologGenes', {
+GENES_SCHEMA = ns.model('HomologGenes', {
     'id': fields.String,
     'taxon_id': fields.Integer,
     'symbol': fields.String,
@@ -39,7 +31,7 @@ HOMOLOGS_SCHEMA = ns.model('HomologGenes', {
     'strand': fields.String,
     'type': fields.String,
     'exons': fields.List(fields.Nested(EXONS_SCHEMA)),
-    'homologs': fields.List(FormatGeneData())
+    'homologs': fields.List(fields.Nested(HOMOLOGS_SCHEMA))
 })
 
 
@@ -52,7 +44,7 @@ class HomologsByChromosome(Resource):
               'NCBI species ID, such as 9606 (H. sapiens), 10090 (M. musculus), etc.')
     @ns.param('chromosome',
               'Chromosome number, including X and Y')
-    @ns.marshal_with(HOMOLOGS_SCHEMA, as_list=True)
+    @ns.marshal_with(GENES_SCHEMA, as_list=True)
     def get(self, ref_taxonid, comp_taxonid, chromosome):
         res = get_homologs_by_species_ids_and_reference_chromosome(
             ref_taxonid,

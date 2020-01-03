@@ -2,11 +2,14 @@ from sqlalchemy import *
 from sqlalchemy.orm import relationship
 from . import BASE
 
-homolog = Table(
-    'homolog', BASE.metadata,
-    Column('ref_gene_id', String, ForeignKey('gene.gene_id'), primary_key=True),
-    Column('comp_gene_id', String, ForeignKey('gene.gene_id'), primary_key=True)
-)
+# [gik 1/3/2020] keep the block below until v2 public release;
+# [gik 1/3/2020] it is an alternative/previous approach to get gene's homologs,
+# [gik 1/3/2020] which got replaced when the Homolog model was added
+# homolog = Table(
+#     'homolog', BASE.metadata,
+#     Column('ref_gene_id', String, ForeignKey('gene.gene_id'), primary_key=True),
+#     Column('comp_gene_id', String, ForeignKey('gene.gene_id'), primary_key=True)
+# )
 
 gene_ontology_map = Table(
     'gene_ontology_map', BASE.metadata,
@@ -29,11 +32,15 @@ class Gene(BASE):
     type = Column("gene_type", String)
 
     exons = relationship('Exon')
-    homologs = relationship('Gene', secondary='homolog',
-                            primaryjoin='Gene.id == homolog.c.ref_gene_id',
-                            secondaryjoin='Gene.id == homolog.c.comp_gene_id',
-                            backref='references'
-                            )
+    # [gik 1/3/2020] keep the block below until v2 public release;
+    # [gik 1/3/2020] it is an alternative/previous approach to get gene's homologs,
+    # [gik 1/3/2020] which got replaced when the Homolog model was added
+    # homologs = relationship('Gene', secondary='homolog',
+    #                         primaryjoin='Gene.id == homolog.c.ref_gene_id',
+    #                         secondaryjoin='Gene.id == homolog.c.comp_gene_id',
+    #                         backref='references'
+    #                         )
+    homologs = relationship('Homolog')
     ontologies = relationship('OntologyTerm', secondary='gene_ontology_map',
                               primaryjoin='Gene.id == gene_ontology_map.c.gene_id',
                               secondaryjoin='OntologyTerm.id == gene_ontology_map.c.ontology_id',
