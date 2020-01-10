@@ -26,5 +26,5 @@ class Homolog(BASE):
     comp_strand = Column(String)
 
     def __repr__(self):
-        return "<Homolog: (ref_gene='%s', ref_species='%d', comp_gene='%s', comp_species='%s')>" \
-               % (self.ref_gene_id, self.ref_taxon_id, self.id, self.taxon_id)
+        return f"<Homolog: (ref_gene='self.ref_gene_id', ref_species='self.ref_taxon_id', " \
+               f"comp_gene='self.id', comp_species='self.taxon_id')>"

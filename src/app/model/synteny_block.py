@@ -19,5 +19,6 @@ class SyntenicBlock(BASE):
     id = Column("symbol", String, primary_key=True)
 
     def __repr__(self):
-        return "<Synteny Block:(id='%s', reference species='%d', comparison species='%d')>" % \
-               (self.id, self.ref_taxonid, self.comp_taxonid)
+        return f"<Synteny Block: (id='self.id', " \
+               f"reference_species='self.ref_taxonid', " \
+               f"comparison_species='self.comp_taxonid')>"
