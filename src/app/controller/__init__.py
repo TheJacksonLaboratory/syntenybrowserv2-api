@@ -5,6 +5,8 @@ The root of the API Blueprint code
 from flask_restplus import Api
 from flask import Blueprint
 
+import src.utils.exceptions as e
+
 from .utils.jwt import AUTHORIZATIONS
 
 from .auth_controller import NS as auth_ns
@@ -38,3 +40,8 @@ API.add_namespace(homologs_ns)
 API.add_namespace(ontologies_ns)
 API.add_namespace(species_ns)
 API.add_namespace(qtls_ns)
+
+
+@API.errorhandler(e.InvalidRequestArgumentValueException)
+def handle_api_exception(e):
+    return {'message': e.message}, e.status_code

@@ -41,7 +41,7 @@ def make_celery(app=None):
     app = app or create_app('dev')
     celery = Celery(__name__, broker=app.config['CELERY_BROKER_URL'])
     celery.conf.update(app.config)
-    TaskBase = celery.Task # pylint: disable=C0103
+    TaskBase = celery.Task  # pylint: disable=C0103
 
     class ContextTask(TaskBase):  # pylint: disable=R0903
         """ Inject flask context into the celery object """

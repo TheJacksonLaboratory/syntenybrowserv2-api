@@ -1,9 +1,10 @@
-from flask_restplus import Resource, Namespace, fields, abort
+from flask_restplus import Resource, Namespace, fields
 
 from src.app.service.homologs_service import \
     get_homologs_by_species_ids_and_reference_chromosome
 from src.app.utils.common import check_species_exists, check_chromosome_exists
 
+from src.utils.exceptions import InvalidRequestArgumentValueException
 
 ns = Namespace('homologs', description='Given reference and comparison species IDs, and a chromosome number, returns '
                'all homologs matched to genes on the specified chromosome in the reference species')
@@ -55,26 +56,21 @@ class HomologsByChromosome(Resource):
             # check that the reference species are available in the application
             ref_species_exists = check_species_exists(ref_taxonid)
             if ref_species_exists is False:
-                message = 'The species with ID: <{}> is not represented in the database ' \
-                          'and thus there is no associated genes data.'.format(ref_taxonid)
-                abort(400, message=message)
-            else:
-                # check that the comparison species are available in the application
-                comp_species_exists = check_species_exists(comp_taxonid)
-                if comp_species_exists is False:
-                    message = 'The species with ID: <{}> is not represented in the database ' \
-                              'and thus there is no associated genes data.'.format(comp_taxonid)
-                    abort(400, message=message)
-                else:
-                    # check that the reference chromosome is valid (for that species)
-                    chromosome_exists = check_chromosome_exists(ref_taxonid, chromosome)
-                    if chromosome_exists is False:
-                        message = 'The species with ID: <{}> does not have chromosome: <{}>'\
-                            .format(ref_taxonid, chromosome)
-                        abort(400, message=message)
-                    else:
-                        # reference and comparison species data are available in the application
-                        # and the reference chromosome is valid, but there is no homologs between
-                        # the species for that chromosome, then an empty list is returned
-                        return res, 200
+                message = f'The species with ID: <{ref_taxonid}> is not represented in the database ' \
+                          f'and thus there is no associated genes data.'
+                raise InvalidRequestArgumentValueException(400, message)
+
+            # check that the comparison species are available in the application
+            comp_species_exists = check_species_exists(comp_taxonid)
+            if comp_species_exists is False:
+                message = f'The species with ID: <{comp_taxonid}> is not represented in the database ' \
+                          f'and thus there is no associated genes data.'
+                raise InvalidRequestArgumentValueException(400, message)
+
+            # check that the reference chromosome is valid (for that species)
+            chromosome_exists = check_chromosome_exists(ref_taxonid, chromosome)
+            if chromosome_exists is False:
+                message = f'The species with ID: <{ref_taxonid}> does not have chromosome: <{chromosome}>'
+                raise InvalidRequestArgumentValueException(400, message)
+
         return res, 200

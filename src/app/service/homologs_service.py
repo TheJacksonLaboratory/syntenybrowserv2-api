@@ -6,10 +6,10 @@ from src.app.model import SESSION, Gene
 def get_homologs_by_species_ids_and_reference_chromosome(ref_taxonid, comp_taxonid, chromosome):
     """
 
-    :param ref_taxonid:
-    :param comp_taxonid:
-    :param chromosome:
-    :return:
+    :param ref_taxonid: species ID, such as 9606 (H. sapiens), 10090 (M. musculus), etc.
+    :param comp_taxonid: species ID, such as 9606 (H. sapiens), 10090 (M. musculus), etc.
+    :param chromosome: reference species chromosome ID
+    :return: homologs - a list of Gene objects or an empty list
     """
     # select all reference species genes,
     # located on the specified chromosome
