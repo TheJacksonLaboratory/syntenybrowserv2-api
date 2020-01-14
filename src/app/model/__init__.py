@@ -49,8 +49,8 @@ def drop_all(engine):
     BASE.metadata.drop_all(engine)
 
 
-
 from .gene import Gene
 from .exon import Exon
+from .homolog import Homolog
 from .ontology_term import OntologyTerm
 from .synteny_block import SyntenicBlock

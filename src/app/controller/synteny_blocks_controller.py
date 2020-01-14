@@ -37,8 +37,8 @@ class SynBlocks(Resource):
 
         # when no empty blocks found
         if not res:
-            message = 'No syntenic blocks between species <{}> and <{}> could be found in the database.'\
-                .format(ref_taxonid, comp_taxonid)
+            message = f'No syntenic blocks between species <{ref_taxonid}> and <{comp_taxonid}> ' \
+                      f'could be found in the database.'
 
             abort(400, message=message)
         return res, 200
@@ -62,8 +62,8 @@ class SynBlocksChr(Resource):
 
         # when no empty blocks found
         if not res:
-            message = 'No syntenic blocks between species <{}> and <{}> on chromosome <{}> could be found in ' \
-                      'the database'.format(ref_taxonid, comp_taxonid, chromosome)
+            message = f'No syntenic blocks between species <{ref_taxonid}> and <{comp_taxonid}> ' \
+                      f'on chromosome <{chromosome}> could be found in the database'
 
             abort(400, message=message)
         return res, 200

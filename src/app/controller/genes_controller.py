@@ -1,7 +1,8 @@
 from flask_restplus import Resource, Namespace, fields, abort
 
 from src.app.service.genes_service import get_all_genes, get_genes_by_species, \
-    get_genes_by_species_chromosome, check_species_exists
+    get_genes_by_species_chromosome
+from src.app.utils.common import check_species_exists
 
 ns = Namespace('genes', description='Returns gene information about all genes '
                                     'available in the database, as well as '
@@ -68,8 +69,8 @@ class GenesBySpeciesId(Resource):
         res = get_genes_by_species(species_id)
 
         if not res:
-            message = 'The species with ID: <{}> is not represented in the database ' \
-                    'and thus there is no associated genes data.'.format(species_id)
+            message = f'The species with ID: <{species_id}> is not represented in the database and thus there is ' \
+                      f'no associated genes data.'
             abort(400, message=message)
         return res, 200
 
@@ -92,11 +93,11 @@ class GenesByChromosome(Resource):
             species_exists = check_species_exists(species_id)
 
             if species_exists:
-                message = 'The species with ID: <{}> is represented in the database, ' \
-                          'but has no associated data for chromosome: <{}>.'.format(species_id, chromosome)
+                message = f'The species with ID: <{species_id}> is represented in the database, ' \
+                          f'but has no associated data for chromosome: <{chromosome}>.'
             else:
-                message = 'The species with ID: <{}> is not represented in the database ' \
-                          'and thus there is no associated genes data.'.format(species_id)
+                message = f'The species with ID: <{species_id}> is not represented in the database and thus there is ' \
+                          f'no associated genes data.'
             abort(400, message=message)
         return res, 200
 
@@ -130,8 +131,8 @@ class GenesMetaBySpeciesId(Resource):
         res = get_genes_by_species(species_id)
 
         if not res:
-            message = 'The species with ID: <{}> is not represented in the database ' \
-                    'and thus there is no associated genes data.'.format(species_id)
+            message = f'The species with ID: <{species_id}> is not represented in the database ' \
+                      f'and thus there is no associated genes data.'
             abort(400, message=message)
         return res, 200
 
@@ -154,10 +155,10 @@ class GenesMetaByChromosome(Resource):
             species_exists = check_species_exists(species_id)
 
             if species_exists:
-                message = 'The species with ID: <{}> is represented in the database, ' \
-                          'but has no associated data for chromosome:<{}>.'.format(species_id, chromosome)
+                message = f'The species with ID: <{species_id}> is represented in the database, ' \
+                          f'but has no associated data for chromosome:<{chromosome}>.'
             else:
-                message = 'The species with ID: <{}> is not represented in the database ' \
-                          'and thus there is no associated genes data.'.format(species_id)
+                message = f'The species with ID: <{species_id}> is not represented in the database ' \
+                          f'and thus there is no associated genes data.'
             abort(400, message=message)
         return res, 200
