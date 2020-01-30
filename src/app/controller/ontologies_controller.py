@@ -9,7 +9,8 @@ ns = Namespace('ontologies', description='Returns information about ontology and
 # response serialization schemas
 ONT_TERMS_SCHEMA_SIMPLE = ns.model('OntologyTermSimple', {
     'id': fields.String,
-    'name': fields.String
+    'name': fields.String,
+    'count': fields.Integer
 })
 
 GENE_TERMS_SCHEMA = ns.model('GeneTerm', {
