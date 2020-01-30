@@ -9,7 +9,9 @@ ns = Namespace('ontologies', description='Returns information about ontology and
 # response serialization schemas
 ONT_TERMS_SCHEMA_SIMPLE = ns.model('OntologyTermSimple', {
     'id': fields.String,
-    'name': fields.String
+    'name': fields.String,
+    'namespace': fields.String, 
+    'def': fields.String(attribute='definition')
 })
 
 GENE_TERMS_SCHEMA = ns.model('GeneTerm', {
@@ -80,6 +82,21 @@ class OntologyTermByIdSimple(Resource):
                                "that the ontology you are interested in, is "
                                "actually available in the synteny browser.")
         return terms, 200
+
+
+@ns.route('/descendents/<string:ontology_term>')
+@ns.param('ontology_term',
+          '')
+class OntTermDescendentsByTermId(Resource):
+
+    @ns.marshal_with(ONT_TERMS_SCHEMA, as_list=True)
+    def get(self, ontology_term):
+        query = SESSION.query(OntologyTerm)\
+            .filter_by(id=ontology_term)
+        term = query.all()
+        if not term:
+            abort(400, message="")
+        return term, 200
 
 
 def do_search(parent, parent_terms):
