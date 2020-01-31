@@ -9,7 +9,8 @@ ns = Namespace('ontologies', description='Returns information about ontology and
 # response serialization schemas
 ONT_TERMS_SCHEMA_SIMPLE = ns.model('OntologyTermSimple', {
     'id': fields.String,
-    'name': fields.String
+    'name': fields.String,
+    'count': fields.Integer
 })
 
 GENE_TERMS_SCHEMA = ns.model('GeneTerm', {
@@ -23,6 +24,12 @@ GENE_TERMS_SCHEMA = ns.model('GeneTerm', {
     'type': fields.String,
     'term_id': fields.String,
     'term_name': fields.String
+})
+
+ONT_TERM_METADATA_SCHEMA = ns.model('OntTermMetadata', {
+    'namespace': fields.String,
+    'def': fields.String(attribute='definition'),
+    'descendants': fields.List(fields.Nested(ONT_TERMS_SCHEMA_SIMPLE))
 })
 
 ONT_TERMS_SCHEMA = ns.model('OntologyTerm', {
@@ -80,6 +87,24 @@ class OntologyTermByIdSimple(Resource):
                                "that the ontology you are interested in, is "
                                "actually available in the synteny browser.")
         return terms, 200
+
+
+@ns.route('/metadata/<string:ont_term_id>')
+@ns.param('ont_term_id',
+          'Ontology term ID (eg. GO:0002027')
+class OntMetadataByTermId(Resource):
+
+    @ns.marshal_with(ONT_TERM_METADATA_SCHEMA, as_list=True)
+    def get(self, ont_term_id):
+        query = SESSION.query(OntologyTerm)\
+            .filter_by(id=ont_term_id)
+        term = query.all()
+        if not term:
+            abort(400, message="ERROR: invalid 'ont_term_id' " 
+                               "Make sure that the spelling is correct and " 
+                               "that the ontology term you are interested in, is " 
+                               "actually correct and supported by the synteny browser.")
+        return term, 200
 
 
 def do_search(parent, parent_terms):

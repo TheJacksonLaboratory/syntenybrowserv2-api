@@ -17,6 +17,7 @@ class OntologyTerm(BASE):
     name = Column(String)
     namespace = Column(String)
     definition = Column('def', String)
+    count = Column(Integer)
 
     descendants = relationship('OntologyTerm', secondary='on_pairs',
                                primaryjoin='OntologyTerm.id == on_pairs.c.parent',
