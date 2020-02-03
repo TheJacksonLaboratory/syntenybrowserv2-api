@@ -12,7 +12,7 @@ ns = Namespace('bands', description='Returns band information about all cytogene
                                     'specified species and a chromosome.')
 
 # response marshalling schemas
-CYTOGEN_BAND_SCHEMA = ns.model('CytogeneticBand', {
+CYTOGENETIC_BAND_SCHEMA = ns.model('CytogeneticBand', {
     'id': fields.String,
     'taxon_id': fields.Integer,
     'chr': fields.String,
@@ -29,7 +29,7 @@ CYTOGEN_BAND_SCHEMA = ns.model('CytogeneticBand', {
 @ns.route('/', methods=['GET'])
 class Bands(Resource):
 
-    @ns.marshal_with(CYTOGEN_BAND_SCHEMA, as_list=True)
+    @ns.marshal_with(CYTOGENETIC_BAND_SCHEMA, as_list=True)
     def get(self):
         """
         Returns cytogenetic bands data for all available species in the database.
@@ -43,11 +43,11 @@ class Bands(Resource):
 
 
 @ns.route('/<int:species_id>', methods=['GET'])
-@ns.param('species_id',
-          'NCBI species ID, such as 9606 (H. sapiens), 10090 (M. musculus), etc.')
+@ns.param("species_id",
+          "NCBI species ID, such as 9606 (H. sapiens), 10090 (M. musculus), etc.")
 class BandsBySpeciesId(Resource):
 
-    @ns.marshal_with(CYTOGEN_BAND_SCHEMA, as_list=True)
+    @ns.marshal_with(CYTOGENETIC_BAND_SCHEMA, as_list=True)
     def get(self, species_id):
         """
         Returns cytogenetic bands data for the specified species.
@@ -64,13 +64,13 @@ class BandsBySpeciesId(Resource):
 
 
 @ns.route('/<int:species_id>/<string:chromosome>', methods=['GET'])
-@ns.param('species_id',
-          'NCBI species ID, such as 9606 (H. sapiens), 10090 (M. musculus), etc.')
-@ns.param('chromosome',
-          'Reference species chromosome ID')
+@ns.param("species_id",
+          "NCBI species ID, such as 9606 (H. sapiens), 10090 (M. musculus), etc.")
+@ns.param("chromosome",
+          "Species chromosome ID, such as '1', '10', 'X'")
 class BandsByChromosome(Resource):
 
-    @ns.marshal_with(CYTOGEN_BAND_SCHEMA, as_list=True)
+    @ns.marshal_with(CYTOGENETIC_BAND_SCHEMA, as_list=True)
     def get(self, species_id, chromosome):
         """
         Returns cytogenetic bands data for the specified species and chromosome.
