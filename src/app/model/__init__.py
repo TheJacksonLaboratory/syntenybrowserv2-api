@@ -49,6 +49,7 @@ def drop_all(engine):
     BASE.metadata.drop_all(engine)
 
 
+from .cytogenetic_band import CytogeneticBand
 from .gene import Gene
 from .exon import Exon
 from .homolog import Homolog
