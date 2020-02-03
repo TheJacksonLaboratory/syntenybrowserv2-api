@@ -11,6 +11,7 @@ from .utils.jwt import AUTHORIZATIONS
 
 from .auth_controller import NS as auth_ns
 from .colors_controller import ns as colors_ns
+from .cytogenetic_bands_controller import ns as bands_ns
 from .genes_controller import ns as genes_ns
 from .homologs_controller import ns as homologs_ns
 from .ontologies_controller import ns as ontologies_ns
@@ -33,6 +34,7 @@ API = Api(API_BLUEPRINT,
           )
 
 API.add_namespace(auth_ns)
+API.add_namespace(bands_ns)
 API.add_namespace(blocks_ns)
 API.add_namespace(colors_ns)
 API.add_namespace(genes_ns)
