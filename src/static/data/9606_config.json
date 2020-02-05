@@ -36,10 +36,10 @@
       "X": 155270560,
       "Y": 59373566
     },
-    "qtls": true,
+    "qtls": false,
     "searches": [
       {
-        "name": "Feature Symbol",
+        "name": "Feature Attribute",
         "value": "symbol"
       },
       {
