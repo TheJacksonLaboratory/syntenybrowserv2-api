@@ -1,4 +1,4 @@
-from flask_restplus import Resource, Namespace, fields, abort
+from flask_restplus import Resource, Namespace, fields
 
 from src.app.service.cytogenetic_bands_service import get_all_bands, get_bands_by_species, \
     get_bands_by_species_and_chromosome
