@@ -17,6 +17,7 @@ from .homologs_controller import ns as homologs_ns
 from .ontologies_controller import ns as ontologies_ns
 from .species_controller import ns as species_ns
 from .synteny_blocks_controller import ns as blocks_ns
+from .snp_variant_controller import ns as snp_ns
 from .qtls_controller import ns as qtls_ns
 
 
@@ -40,6 +41,7 @@ API.add_namespace(colors_ns)
 API.add_namespace(genes_ns)
 API.add_namespace(homologs_ns)
 API.add_namespace(ontologies_ns)
+API.add_namespace(snp_ns)
 API.add_namespace(species_ns)
 API.add_namespace(qtls_ns)
 

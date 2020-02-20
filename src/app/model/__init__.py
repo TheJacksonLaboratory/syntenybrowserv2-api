@@ -54,4 +54,5 @@ from .gene import Gene
 from .exon import Exon
 from .homolog import Homolog
 from .ontology_term import OntologyTerm
+from .snp_variant import SnpVariant
 from .synteny_block import SyntenicBlock
