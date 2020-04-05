@@ -1,13 +1,37 @@
 from src.app.model import SESSION
 
+from src.test.data.cytogenetic_band_data import CYTOGENETIC_BAND_DATA
 from src.test.data.genes_data import GENES_DATA
 from src.test.data.synteny_blocks_data import SYNTENY_BLOCKS_DATA
 
-
+from src.app.model.cytogenetic_band import CytogeneticBand
 from src.app.model.gene import Gene
 from src.app.model.exon import Exon
 from src.app.model.homolog import Homolog
 from src.app.model.synteny_block import SyntenicBlock
+
+
+def read_test_cytogenetic_band_data():
+    """
+    Reads Cytogenetic band data for testing from the input file.
+    :return: List of Cytogenetic bands, which can be used for testing purposes
+    """
+    cytobands = []
+    for cytoband in CYTOGENETIC_BAND_DATA:
+        c = CytogeneticBand(
+            id=cytoband[0],
+            taxon_id=cytoband[1],
+            chr=cytoband[2],
+            source=cytoband[3],
+            type=cytoband[4],
+            start=cytoband[5],
+            end=cytoband[6],
+            location=cytoband[7],
+            color=cytoband[8]
+        )
+        cytobands.append(c)
+
+    return cytobands
 
 
 def read_test_genes_data():
@@ -111,6 +135,11 @@ def read_test_blocks_data():
         syn_blocks.append(b)
 
     return syn_blocks
+
+
+
+def delete_cytogenetic_band_test_data():
+    SESSION.query(CytogeneticBand).delete()
 
 
 def delete_genes_test_data():
