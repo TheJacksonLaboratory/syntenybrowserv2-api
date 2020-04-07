@@ -5,11 +5,11 @@ import requests
 from faker import Faker
 from flask import url_for
 
-from src.test import BaseLiveServerTestCase
+from tests import BaseLiveServerTestCase
 
 
 class AuthTest(BaseLiveServerTestCase):
-    """ A class to test the auth endpoints """
+    """ A class to tests the auth endpoints """
 
     def test_auth_returns_access_and_refresh(self):
         """ The auth endpoint should give us a refresh and access token """
@@ -20,8 +20,8 @@ class AuthTest(BaseLiveServerTestCase):
         self.assertTrue('refresh' in list(response.json().keys()))
         self.assertTrue('access' in list(response.json().keys()))
 
-    # TODO: When authenticated routes are introduced, make sure to test the access token here
-    @unittest.skip("No protected routes to test against")
+    # TODO: When authenticated routes are introduced, make sure to tests the access token here
+    @unittest.skip("No protected routes to tests against")
     def test_access_token_works(self):
         """ The access token should let us access a protected endpoint """
         fake = Faker()

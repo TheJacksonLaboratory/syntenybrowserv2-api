@@ -2,20 +2,18 @@
 
 import unittest
 
-from flask_restplus import marshal
 from sqlalchemy import and_
-from src.test import BaseDBTestCase
-from src.app.controller.homologs_controller import GENES_SCHEMA
+from tests import BaseDBTestCase
 from src.app.model import SESSION, Homolog
-from src.test.utils import read_test_homologs_data, delete_homologs_test_data
-from src.test.data.genes_data import GENES_DATA
+from tests.utils import read_test_homologs_data, delete_homologs_test_data
+from tests.data.genes_data import GENES_DATA
 
 
 class DBConnectionTest(BaseDBTestCase):
     """ Is the database available? """
 
     def test_db(self):
-        """ Smoke test """
+        """ Smoke tests """
         with self.engine.connect() as conn:
             self.assertFalse(conn.closed)
 

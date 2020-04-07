@@ -5,6 +5,7 @@ from src.test.data.genes_data import GENES_DATA
 from src.test.data.ontology_terms_data import ONTOLOGY_TERMS_DATA
 from src.test.data.synteny_blocks_data import SYNTENY_BLOCKS_DATA
 
+
 from src.app.model.cytogenetic_band import CytogeneticBand
 from src.app.model.gene import Gene
 from src.app.model.exon import Exon

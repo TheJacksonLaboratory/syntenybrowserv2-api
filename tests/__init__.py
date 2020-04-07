@@ -13,7 +13,7 @@ from src.app.model import SESSION, drop_all
 
 class BaseTestCase(TestCase):
     """ Base Tests """
-    __config_name__ = 'test'
+    __config_name__ = 'tests'
 
     def create_app(self):
         app = create_app(self.__config_name__)
@@ -34,7 +34,7 @@ class BaseDBTestCase(BaseTestCase):
 
 class BaseLiveServerTestCase(LiveServerTestCase):
     """ Base Tests that require a live server """
-    __config_name__ = 'test'
+    __config_name__ = 'tests'
 
     def create_app(self):
 

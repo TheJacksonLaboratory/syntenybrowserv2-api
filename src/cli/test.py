@@ -15,7 +15,7 @@ class RunTestsCommand(Command):
     def run(self):  # pylint: disable=E0202
         """ invoked by the command """
         logging.basicConfig(stream=sys.stderr)
-        tests = unittest.TestLoader().discover('src/test', pattern='test*.py')
+        tests = unittest.TestLoader().discover('src/tests', pattern='tests*.py')
         result = unittest.TextTestRunner(verbosity=2).run(tests)
         if result.wasSuccessful():
             return 0
@@ -27,8 +27,8 @@ class RunTestsXMLCommand(Command):
 
     def run(self): # pylint: disable=E0202
         """ invoked by the command """
-        tests = unittest.TestLoader().discover('src/test', pattern='test*.py')
-        result = XMLTestRunner(output='test-reports').run(tests)
+        tests = unittest.TestLoader().discover('src/tests', pattern='tests*.py')
+        result = XMLTestRunner(output='tests-reports').run(tests)
         if result.wasSuccessful():
             return 0
         return 1

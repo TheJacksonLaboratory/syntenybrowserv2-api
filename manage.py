@@ -29,7 +29,7 @@ MANAGER.add_command('init_config', InitConfigCommand)
 MANAGER.add_command('start_workers', StartCeleryWorkersCommand())
 
 # Run tests
-MANAGER.add_command('test', RunTestsCommand())
+MANAGER.add_command('tests', RunTestsCommand())
 MANAGER.add_command('test_xml', RunTestsXMLCommand())
 
 

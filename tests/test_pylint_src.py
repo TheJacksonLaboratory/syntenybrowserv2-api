@@ -5,7 +5,7 @@ Tests the various configuration environments
 import unittest
 from pylint import epylint as lint
 
-from src.test import BaseTestCase
+from tests import BaseTestCase
 
 
 def lint_module(module_path, options='--disable=W0511 -E'):

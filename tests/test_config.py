@@ -4,7 +4,7 @@ Tests the various configuration environments
 
 import unittest
 from flask import current_app
-from src.test import BaseTestCase
+from tests import BaseTestCase
 
 
 class TestDevelopmentConfig(BaseTestCase):
@@ -20,7 +20,7 @@ class TestDevelopmentConfig(BaseTestCase):
 
 class TestTestingConfig(BaseTestCase):
     """ Test the testing config environment """
-    __config_name__ = 'test'
+    __config_name__ = 'tests'
 
     def test_app_is_testing(self):
         """ Check that the app is using the testing config """

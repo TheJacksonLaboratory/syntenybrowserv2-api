@@ -4,18 +4,18 @@ import unittest
 
 from flask_restplus import marshal
 from sqlalchemy import and_
-from src.test import BaseDBTestCase
+from tests import BaseDBTestCase
 from src.app.controller.synteny_blocks_controller import BLOCKS_SCHEMA
 from src.app.model import SESSION, SyntenicBlock
-from src.test.utils import read_test_blocks_data, delete_blocks_test_data
-from src.test.data.synteny_blocks_data import SYNTENY_BLOCKS_DATA
+from tests.utils import read_test_blocks_data, delete_blocks_test_data
+from tests.data.synteny_blocks_data import SYNTENY_BLOCKS_DATA
 
 
 class DBConnectionTest(BaseDBTestCase):
     """ Is the database available? """
 
     def test_db(self):
-        """ Smoke test """
+        """ Smoke tests """
         with self.engine.connect() as conn:
             self.assertFalse(conn.closed)
 

@@ -3,8 +3,8 @@ Tests related to genes data availability, creation, and interaction
 """
 
 import unittest
-from src.test import BaseDBTestCase
-from src.test.utils import read_test_genes, read_test_exons, \
+from tests import BaseDBTestCase
+from tests.utils import read_test_genes_data, read_test_exons_data, \
     delete_exons_test_data, delete_genes_test_data
 
 
@@ -12,7 +12,7 @@ class DbConnectionTest(BaseDBTestCase):
     """ Is the database available? """
 
     def test_db(self):
-        """ Smoke test """
+        """ Smoke tests """
         with self.engine.connect() as conn:
             self.assertFalse(conn.closed)
 
@@ -21,8 +21,8 @@ class GeneModelTest(BaseDBTestCase):
     """ Test interacting with the provided Gene SqlAlchemy definition """
 
     def setUp(self):
-        genes = read_test_genes()
-        exons = read_test_exons()
+        genes = read_test_genes_data()
+        exons = read_test_exons_data()
 
         self.session.bulk_save_objects(genes)
         self.session.bulk_save_objects(exons)

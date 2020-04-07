@@ -8,14 +8,14 @@ Tests related to database availability, creation, and interaction
 #pylint: disable=E1101
 
 import unittest
-from src.test import BaseDBTestCase
+from tests import BaseDBTestCase
 
 
 class DbConnectionTest(BaseDBTestCase):
     """ Is the database available ? """
 
     def test_db(self):
-        """ Smoke test """
+        """ Smoke tests """
         with self.engine.connect() as conn:
             self.assertFalse(conn.closed)
 
