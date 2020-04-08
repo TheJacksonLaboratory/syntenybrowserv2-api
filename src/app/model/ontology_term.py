@@ -5,7 +5,9 @@ from . import BASE
 on_pairs = Table(
     'on_pairs', BASE.metadata,
     Column('parent', String, ForeignKey('on_terms.id'), primary_key=True),
-    Column('child', String, ForeignKey('on_terms.id'), primary_key=True))
+    Column('child', String, ForeignKey('on_terms.id'), primary_key=True),
+    Column('relationship', String, default='is_a')
+)
 
 
 class OntologyTerm(BASE):
