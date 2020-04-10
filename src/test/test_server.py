@@ -4,7 +4,7 @@ import unittest
 import requests
 from flask import url_for
 
-from tests import BaseLiveServerTestCase
+from src.test import BaseLiveServerTestCase
 from src.app.service.colors_service import get_colors
 
 

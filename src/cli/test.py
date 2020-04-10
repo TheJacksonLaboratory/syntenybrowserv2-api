@@ -11,11 +11,11 @@ from flask_script import Command
 
 
 class RunTestsCommand(Command):
-    """ Run unit tests """
+    """ Run unit test """
     def run(self):  # pylint: disable=E0202
         """ invoked by the command """
         logging.basicConfig(stream=sys.stderr)
-        tests = unittest.TestLoader().discover('src/tests', pattern='tests*.py')
+        tests = unittest.TestLoader().discover('src/test', pattern='test*.py')
         result = unittest.TextTestRunner(verbosity=2).run(tests)
         if result.wasSuccessful():
             return 0
@@ -23,12 +23,12 @@ class RunTestsCommand(Command):
 
 
 class RunTestsXMLCommand(Command):
-    """ Runs the unit tests specifically for bamboo CI/CD """
+    """ Runs the unit test specifically for bamboo CI/CD """
 
     def run(self): # pylint: disable=E0202
         """ invoked by the command """
-        tests = unittest.TestLoader().discover('src/tests', pattern='tests*.py')
-        result = XMLTestRunner(output='tests-reports').run(tests)
+        tests = unittest.TestLoader().discover('src/test', pattern='test*.py')
+        result = XMLTestRunner(output='test-reports').run(tests)
         if result.wasSuccessful():
             return 0
         return 1

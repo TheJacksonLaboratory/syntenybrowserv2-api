@@ -3,8 +3,8 @@ Tests related to genes data availability, creation, and interaction
 """
 
 import unittest
-from tests import BaseDBTestCase
-from tests.utils import read_test_genes_data, read_test_exons_data, \
+from src.test import BaseDBTestCase
+from src.test.utils import read_test_genes_data, read_test_exons_data, \
     delete_exons_test_data, delete_genes_test_data
 
 
@@ -12,7 +12,7 @@ class DbConnectionTest(BaseDBTestCase):
     """ Is the database available? """
 
     def test_db(self):
-        """ Smoke tests """
+        """ Smoke test """
         with self.engine.connect() as conn:
             self.assertFalse(conn.closed)
 

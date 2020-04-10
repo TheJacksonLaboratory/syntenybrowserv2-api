@@ -8,19 +8,19 @@ Tests related to database availability, creation, and interaction
 #pylint: disable=E1101
 
 import unittest
-from tests import BaseDBTestCase
+from src.test import BaseDBTestCase
 
 
 class DbConnectionTest(BaseDBTestCase):
     """ Is the database available ? """
 
     def test_db(self):
-        """ Smoke tests """
+        """ Smoke test """
         with self.engine.connect() as conn:
             self.assertFalse(conn.closed)
 
 # TODO Implement unittests for the defined models
-@unittest.skip("Hello model tests aren't relevant to this application")
+@unittest.skip("Hello model test aren't relevant to this application")
 class SqlalchemyHelloModelTest(BaseDBTestCase):
     """ Test interacting with the provided sqlalchemy definitions """
 

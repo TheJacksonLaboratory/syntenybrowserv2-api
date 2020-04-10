@@ -1,4 +1,4 @@
-"""tests data for cytogenetic band"""
+"""test data for cytogenetic band"""
 
 CYTOGENETIC_BAND_DATA = [
     ('cytoband_1', 10090, '1', 'UCSC', 'cytogenetic band', 0, 8840440, 'qA1', 'gpos100'),

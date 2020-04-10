@@ -3,17 +3,17 @@
 import unittest
 
 from sqlalchemy import and_
-from tests import BaseDBTestCase
+from src.test import BaseDBTestCase
 from src.app.model import SESSION, Homolog
-from tests.utils import read_test_homologs_data, delete_homologs_test_data
-from tests.data.genes_data import GENES_DATA
+from src.test.utils import read_test_homologs_data, delete_homologs_test_data
+from src.test.data.genes_data import GENES_DATA
 
 
 class DBConnectionTest(BaseDBTestCase):
     """ Is the database available? """
 
     def test_db(self):
-        """ Smoke tests """
+        """ Smoke test """
         with self.engine.connect() as conn:
             self.assertFalse(conn.closed)
 
@@ -47,7 +47,7 @@ class HomologModelTest(BaseDBTestCase):
     def test_query_nonexistent_reference_species(self):
         """ Test that getting data for non-existent reference species has no result """
 
-        # 7227 is Drosophila melanogaster's NSBI species taxonomy ID
+        # 7227 is Drosophila melanogaster's NCBI species taxonomy ID
         ref_taxonid = 7227
         ref_chromosome = GENES_DATA[7][9][0][3]
 

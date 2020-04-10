@@ -1,11 +1,11 @@
 import unittest
 
-from tests import BaseTestCase
-from tests.utils import read_test_blocks_data, delete_blocks_test_data
+from src.test import BaseTestCase
+from src.test.utils import read_test_blocks_data, delete_blocks_test_data
 
 
 class SyntenicBlockEndpointTest(BaseTestCase):
-    """ A class to tests the /blocks endpoint and all its derivatives. """
+    """ A class to test the /blocks endpoint and all its derivatives. """
 
     def setUp(self):
         blocks = read_test_blocks_data()

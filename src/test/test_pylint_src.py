@@ -5,11 +5,11 @@ Tests the various configuration environments
 import unittest
 from pylint import epylint as lint
 
-from tests import BaseTestCase
+from src.test import BaseTestCase
 
 
 def lint_module(module_path, options='--disable=W0511 -E'):
-    """ helper function to enable drying the lint tests """
+    """ helper function to enable drying the lint test """
     stdout, _ = lint.py_run(f'{module_path} {options}', return_std=True)
     stdout_string = stdout.getvalue()
     code_passes = 'Your code has been rated at 10.00/10' in stdout_string
@@ -19,7 +19,7 @@ def lint_module(module_path, options='--disable=W0511 -E'):
 class TestLintCode(BaseTestCase):
     """ Perform linting analysis on the source code """
 
-    # TODO source code should pass lint tests
+    # TODO source code should pass lint test
     @unittest.skip("Code is known to fail lint error checking")
     def test_lint_src(self):
         """ Lint the entire source and check for problems """

@@ -1,13 +1,13 @@
-""" Functional tests for /gene endpoints. """
+""" Functional test for /gene endpoints. """
 import unittest
 
-from tests import BaseTestCase
-from tests.utils import read_test_genes_data, read_test_exons_data, \
+from src.test import BaseTestCase
+from src.test.utils import read_test_genes_data, read_test_exons_data, \
     delete_exons_test_data, delete_genes_test_data
 
 
 class GeneEndpointsTests(BaseTestCase):
-    """ A class to tests the /genes endpoint and all its derivatives. """
+    """ A class to test the /genes endpoint and all its derivatives. """
 
     def setUp(self):
         genes = read_test_genes_data()
@@ -102,7 +102,7 @@ class GeneEndpointsTests(BaseTestCase):
     #   rather than an empty list (i.e. []) with no explanation
     def test_get_all_genes_no_results(self):
         """
-        To tests this case the entire genes table should be empty, which is not possible.
+        To test this case the entire genes table should be empty, which is not possible.
 
         :return:
         """

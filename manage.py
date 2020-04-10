@@ -28,8 +28,8 @@ MANAGER.add_command('init_config', InitConfigCommand)
 # Start and stop celery workers
 MANAGER.add_command('start_workers', StartCeleryWorkersCommand())
 
-# Run tests
-MANAGER.add_command('tests', RunTestsCommand())
+# Run test
+MANAGER.add_command('test', RunTestsCommand())
 MANAGER.add_command('test_xml', RunTestsXMLCommand())
 
 
