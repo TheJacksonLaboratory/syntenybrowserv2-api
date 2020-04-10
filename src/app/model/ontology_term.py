@@ -24,3 +24,8 @@ class OntologyTerm(BASE):
     descendants = relationship('OntologyTerm', secondary='on_pairs',
                                primaryjoin='OntologyTerm.id == on_pairs.c.parent',
                                secondaryjoin='OntologyTerm.id == on_pairs.c.child')
+
+    def __reduce__(self):
+        return f"<Ontology Term: (id='self.id', " \
+               f"name='self.name', " \
+               f"count='self.count')>"

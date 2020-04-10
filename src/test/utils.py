@@ -1,13 +1,15 @@
-from src.app.model import SESSION
+from src.app.model import SESSION, BASE
 
 from src.test.data.cytogenetic_band_data import CYTOGENETIC_BAND_DATA
 from src.test.data.genes_data import GENES_DATA
+from src.test.data.ontology_terms_data import ONTOLOGY_TERMS_DATA
 from src.test.data.synteny_blocks_data import SYNTENY_BLOCKS_DATA
 
 from src.app.model.cytogenetic_band import CytogeneticBand
 from src.app.model.gene import Gene
 from src.app.model.exon import Exon
 from src.app.model.homolog import Homolog
+from src.app.model.ontology_term import OntologyTerm
 from src.app.model.synteny_block import SyntenicBlock
 
 
@@ -53,6 +55,12 @@ def read_test_genes_data():
             strand=gene[6],
             type=gene[7]
         )
+
+        ontologies = []
+
+        # for term in genes[10]:
+
+
         genes.append(g)
 
     return genes
@@ -111,6 +119,43 @@ def read_test_homologs_data():
     return homologs
 
 
+def read_test_ontology_terms_data():
+    """
+    Reads ontology terms data for testing from the input file.
+
+    :return: list of OntologyTerm objects that can be used for testing purposes
+    """
+    on_terms = []
+
+    for term in ONTOLOGY_TERMS_DATA:
+        o = OntologyTerm(
+            id=term[0],
+            name=term[1],
+            namespace=term[2],
+            definition=term[3],
+            count=term[4]
+        )
+
+        descendants = []
+
+        # term[5] contains this ontology term's descendants data;
+        # convert it to an OntologyTerm object
+        for descendant in term[5]:
+            d = OntologyTerm(
+                id=descendant[0],
+                name=descendant[1],
+                namespace=descendant[2],
+                definition=descendant[3],
+                count=descendant[4]
+            )
+            descendants.append(d)
+
+        o.descendants = descendants
+        on_terms.append(o)
+
+    return on_terms
+
+
 def read_test_blocks_data():
     """
     Reads synteny blocks data for testing from the input file.
@@ -152,6 +197,15 @@ def delete_exons_test_data():
 
 def delete_homologs_test_data():
     SESSION.query(Homolog).delete()
+
+
+def delete_test_ontology_terms_data():
+    on_terms = SESSION.query(OntologyTerm).all()
+    # deleting each OntologyTerm individually is needed
+    # in order to delete the records in table 'on_pairs' too;
+    # bulk deleting all OntologyTerm instances doesn't delete records in 'on_pairs'
+    for term in on_terms:
+        SESSION.delete(term)
 
 
 def delete_blocks_test_data():
