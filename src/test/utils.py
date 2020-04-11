@@ -5,17 +5,22 @@ from src.test.data.genes_data import GENES_DATA
 from src.test.data.ontology_terms_data import ONTOLOGY_TERMS_DATA
 from src.test.data.synteny_blocks_data import SYNTENY_BLOCKS_DATA
 
-
-from src.test.data.cytogenetic_band_data import CYTOGENETIC_BAND_DATA
-from src.test.data.genes_data import GENES_DATA
-from src.test.data.synteny_blocks_data import SYNTENY_BLOCKS_DATA
-
 from src.app.model.cytogenetic_band import CytogeneticBand
 from src.app.model.gene import Gene
 from src.app.model.exon import Exon
 from src.app.model.homolog import Homolog
 from src.app.model.ontology_term import OntologyTerm
 from src.app.model.synteny_block import SyntenicBlock
+
+from jsonschema import validate
+
+
+def validate_response200_payload(response, expected_schema):
+    """
+    Verifies response payload: checks correct field names and types in responses with status code 200.
+    """
+    # validate correct field names and value types in response payload
+    validate(instance=response.json, schema=expected_schema)
 
 
 def read_test_cytogenetic_band_data():

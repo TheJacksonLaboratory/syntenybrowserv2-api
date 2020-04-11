@@ -1,8 +1,8 @@
 import unittest
-
 from src.test import BaseTestCase
 from src.test.utils import read_test_cytogenetic_band_data, delete_cytogenetic_band_test_data, \
-    read_test_genes_data, delete_genes_test_data
+    read_test_genes_data, delete_genes_test_data, validate_response200_payload
+from src.test.assertions.cytogenetic_band_schema import CYTOGENETIC_BAND_SCHEMA
 
 
 class CytogeneticBandEndpointTest(BaseTestCase):
@@ -24,6 +24,7 @@ class CytogeneticBandEndpointTest(BaseTestCase):
         response = self.client.get('/api/bands/')
         self.assert200(response)
         self.assertEqual(len(response.json), expected_number_of_cytogenetic_bands)
+        validate_response200_payload(response, CYTOGENETIC_BAND_SCHEMA)
 
     def test_get_cytogenetic_bands_for_human(self):
         """
@@ -35,6 +36,7 @@ class CytogeneticBandEndpointTest(BaseTestCase):
         response = self.client.get('api/bands/10090')
         self.assert200(response)
         self.assertEqual(len(response.json), expected_number_of_cytogenetic_bands)
+        validate_response200_payload(response, CYTOGENETIC_BAND_SCHEMA)
 
     def test_get_cytogenetic_bands_for_human_neg(self):
         """
@@ -58,6 +60,7 @@ class CytogeneticBandEndpointTest(BaseTestCase):
         response = self.client.get('api/bands/10090/1')
         self.assert200(response)
         self.assertEqual(len(response.json), expected_number_of_cytogenetic_bands)
+        validate_response200_payload(response, CYTOGENETIC_BAND_SCHEMA)
 
     def test_get_cytogenetic_bands_for_mouse_chr_neg(self):
         """

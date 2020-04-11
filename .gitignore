@@ -8,7 +8,7 @@
 *.Rproj
 .ipynb_checkpoints/
 *.env
-venv*
+*venv*
 __pycache__
 *.db
 migrations/*
