@@ -22,7 +22,7 @@ class DbConnectionTest(BaseDBTestCase):
 
 
 class CytogeneticBandModelTest(BaseDBTestCase):
-    """ Test interacting with the provided CytogeneticBand SqlAlchemy definition """
+    """ Test interacting with the provided CytogeneticBand SqlAlchemy definition. """
 
     def setUp(self):
         cytogenetic_band = read_test_cytogenetic_band_data()
@@ -46,7 +46,6 @@ class CytogeneticBandModelTest(BaseDBTestCase):
     def test_get_cytogenetic_band_neg(self):
         """ NEGATIVE CASE: Test to check non-existing taxon ID - Zebrafish - 7955 """
         neg_taxonid = 7955
-
         cytogenetic_band = SESSION.query(CytogeneticBand) \
             .filter(CytogeneticBand.taxon_id == neg_taxonid) \
             .first()

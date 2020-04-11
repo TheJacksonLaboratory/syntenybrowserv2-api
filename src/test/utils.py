@@ -192,7 +192,6 @@ def read_test_blocks_data():
     return syn_blocks
 
 
-
 def delete_cytogenetic_band_test_data():
     SESSION.query(CytogeneticBand).delete()
 

@@ -16,10 +16,7 @@ class CytogeneticBandEndpointTest(BaseTestCase):
         self.session.commit()
 
     def test_get_all_cytogenetic_bands(self):
-        """
-        POSITIVE CASE - Test to check whether all cytobands are returned
-        :return:
-        """
+        """ POSITIVE CASE - Test to check whether all cytobands are returned. """
         expected_number_of_cytogenetic_bands = 11
         response = self.client.get('/api/bands/')
         self.assert200(response)
@@ -27,22 +24,16 @@ class CytogeneticBandEndpointTest(BaseTestCase):
         validate_response200_payload(response, CYTOGENETIC_BAND_SCHEMA)
 
     def test_get_cytogenetic_bands_for_human(self):
-        """
-        POSITIVE CASE - H. sapiens (human) - return all available cytogenetic bands
-
-        :return:
-        """
+        """ POSITIVE CASE - H. sapiens (human) - return all available cytogenetic bands. """
         expected_number_of_cytogenetic_bands = 5
-        response = self.client.get('api/bands/10090')
+        response = self.client.get('/api/bands/10090')
         self.assert200(response)
         self.assertEqual(len(response.json), expected_number_of_cytogenetic_bands)
         validate_response200_payload(response, CYTOGENETIC_BAND_SCHEMA)
 
     def test_get_cytogenetic_bands_for_human_neg(self):
-        """
-        NEGATIVE CASE - Zebrafish taxon ID: 7955 is not present in the test data - should return unsupported messages
-
-        :return:
+        """ NEGATIVE CASE - Zebrafish taxon ID: 7955 is not present in the test data - should return unsupported
+        messages.
         """
         expected_response_object_key = ['message']
         response = self.client.get('/api/bands/7955')
@@ -51,11 +42,7 @@ class CytogeneticBandEndpointTest(BaseTestCase):
         self.assertCountEqual(response_object_key, expected_response_object_key)
 
     def test_get_cytogenetic_bands_for_human_chr(self):
-        """
-        POSITIVE CASE -  H. sapiens (human) and chromosome - return all available cytogenetic bands
-
-        :return:
-        """
+        """ POSITIVE CASE -  H. sapiens (human) and chromosome - return all available cytogenetic bands. """
         expected_number_of_cytogenetic_bands = 5
         response = self.client.get('api/bands/10090/1')
         self.assert200(response)
@@ -63,11 +50,7 @@ class CytogeneticBandEndpointTest(BaseTestCase):
         validate_response200_payload(response, CYTOGENETIC_BAND_SCHEMA)
 
     def test_get_cytogenetic_bands_for_mouse_chr_neg(self):
-        """
-        NEGATIVE CASE - Give chromosome 30 and it should return unsupported messages
-
-        :return:
-        """
+        """ NEGATIVE CASE - Give chromosome 30 and it should return unsupported messages. """
         expected_response_object_key = ['message']
         response = self.client.get('/api/bands/9606/30')
         self.assert400(response)
