@@ -19,7 +19,8 @@ from jsonschema import validate
 
 def validate_response200_payload(response, expected_schema):
     """
-    Verifies response payload: checks correct field names and types in responses with status code 200.
+    Verifies response payload: checks correct field names and types
+    in responses with status code 200.
     """
     # validate correct field names and value types in response payload
     validate(instance=response.json, schema=expected_schema)
