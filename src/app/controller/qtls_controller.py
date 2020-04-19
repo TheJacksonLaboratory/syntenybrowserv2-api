@@ -8,7 +8,7 @@ ns = Namespace('qtls', description='Returns QTL information for all QTLs availab
                                    'QTLs per specified species, and QTLs per specified species and a chromosome.')
 
 
-qtls_schema = ns.model('feature', {
+QTLS_SCHEMA = ns.model('feature', {
     'taxon_id': fields.Integer,
     'chr': fields.String(attribute='seq_id'),
     'id': fields.String,
@@ -22,7 +22,7 @@ qtls_schema = ns.model('feature', {
 @ns.route('/')
 class Qtls(Resource):
 
-    @ns.marshal_with(qtls_schema, as_list=True)
+    @ns.marshal_with(QTLS_SCHEMA, as_list=True)
     def get(self):
         query = SESSION.query(Feature)\
             .filter(Feature.type == 'QTL')
@@ -39,7 +39,7 @@ class Qtls(Resource):
           'NCBI species ID, such as 9606 (H. sapiens), 10090 (M. musculus), etc.')
 class QtlsBySpeciesId(Resource):
 
-    @ns.marshal_with(qtls_schema, as_list=True)
+    @ns.marshal_with(QTLS_SCHEMA, as_list=True)
     def get(self, species_id):
         query = SESSION.query(Feature)\
             .filter(and_(Feature.taxon_id == species_id, Feature.type == 'QTL'))
@@ -58,7 +58,7 @@ class QtlsBySpeciesId(Resource):
           'Reference species chromosome ID')
 class QtlsByChromosome(Resource):
 
-    @ns.marshal_with(qtls_schema, as_list=True)
+    @ns.marshal_with(QTLS_SCHEMA, as_list=True)
     def get(self, species_id, chromosome):
         query = SESSION.query(Feature)\
             .filter(and_(Feature.type == 'QTL',
