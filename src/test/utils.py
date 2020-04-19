@@ -1,13 +1,15 @@
 from src.app.model import SESSION, BASE
 
-from src.test.data.cytogenetic_band_data import CYTOGENETIC_BAND_DATA
-from src.test.data.genes_data import GENES_DATA
-from src.test.data.ontology_terms_data import ONTOLOGY_TERMS_DATA
-from src.test.data.synteny_blocks_data import SYNTENY_BLOCKS_DATA
+from src.test.data.cytogenetic_bands_test_data import CYTOGENETIC_BAND_DATA
+from src.test.data.genes_test_data import GENES_DATA
+from src.test.data.ontology_terms_test_data import ONTOLOGY_TERMS_DATA
+from src.test.data.synteny_blocks_test_data import SYNTENY_BLOCKS_DATA
+from src.test.data.qtls_test_data import QTLS_DATA
 
 from src.app.model.cytogenetic_band import CytogeneticBand
-from src.app.model.gene import Gene
 from src.app.model.exon import Exon
+from src.app.model.feature import Feature
+from src.app.model.gene import Gene
 from src.app.model.homolog import Homolog
 from src.app.model.ontology_term import OntologyTerm
 from src.app.model.synteny_block import SyntenicBlock
@@ -96,6 +98,37 @@ def read_test_exons_data():
             exons.append(e)
 
     return exons
+
+
+def read_test_qtls_data():
+    """
+    Reads Feature (QTL) data for testing from the input file.
+
+    :return: list of Feature (QTL) objects, which can be used for testing purposes.
+    """
+    qtls = []
+
+    for locus in QTLS_DATA:
+        q = Feature(
+            taxon_id=locus[0],
+            seq_id=locus[1],
+            source=locus[2],
+            type=locus[3],
+            start=locus[4],
+            end=locus[5],
+            score=locus[6],
+            strand=locus[7],
+            phase=locus[8],
+            id=locus[9],
+            name=locus[10],
+            dbxref=locus[11],
+            bio_type=locus[12],
+            status=locus[13],
+            parent=locus[14]
+        )
+        qtls.append(q)
+
+    return qtls
 
 
 def read_test_homologs_data():
@@ -202,6 +235,10 @@ def delete_genes_test_data():
 
 def delete_exons_test_data():
     SESSION.query(Exon).delete()
+
+
+def delete_qtls_test_data():
+    SESSION.query(Feature).delete()
 
 
 def delete_homologs_test_data():

@@ -1,3 +1,5 @@
+import logging
+import time
 import unittest
 from src.test import BaseTestCase
 from src.test.utils import read_test_cytogenetic_band_data, delete_cytogenetic_band_test_data, \
@@ -9,11 +11,25 @@ class CytogeneticBandEndpointTest(BaseTestCase):
     """ A class to test the /cytogenetic band endpoint and all its derivatives. """
 
     def setUp(self):
-        cytogenetic_band = read_test_cytogenetic_band_data()
-        self.session.bulk_save_objects(cytogenetic_band)
+        self.startTime = time.time()
+
+        bands = read_test_cytogenetic_band_data()
+        self.session.bulk_save_objects(bands)
+        # genes are used to validate which species are available/valid in the application
         genes = read_test_genes_data()
         self.session.bulk_save_objects(genes)
+
         self.session.commit()
+
+    def tearDown(self):
+        delete_cytogenetic_band_test_data()
+        delete_genes_test_data()
+
+        self.session.commit()
+        self.session.remove()
+        # log test id and run time for diagnostic purposes
+        t = time.time() - self.startTime
+        logging.debug(f"{self.id()}: {t:.3f}")
 
     def test_get_all_cytogenetic_bands(self):
         """ POSITIVE CASE - Test to check whether all cytobands are returned. """
@@ -56,13 +72,6 @@ class CytogeneticBandEndpointTest(BaseTestCase):
         self.assert400(response)
         response_object_key = response.json.keys()
         self.assertCountEqual(response_object_key, expected_response_object_key)
-
-    def tearDown(self):
-        delete_cytogenetic_band_test_data()
-        delete_genes_test_data()
-
-        self.session.commit()
-        self.session.remove()
 
 
 if __name__ == '__main__':
