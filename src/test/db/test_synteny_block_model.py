@@ -8,7 +8,7 @@ from src.test import BaseDBTestCase
 from src.app.controller.synteny_blocks_controller import BLOCKS_SCHEMA
 from src.app.model import SESSION, SyntenicBlock
 from src.test.utils import read_test_blocks_data, delete_blocks_test_data
-from src.test.data.synteny_blocks_data import SYNTENY_BLOCKS_DATA
+from src.test.data.synteny_blocks_test_data import SYNTENY_BLOCKS_DATA
 
 
 class DBConnectionTest(BaseDBTestCase):
@@ -28,6 +28,11 @@ class SyntenyBlockModelTest(BaseDBTestCase):
 
         self.session.bulk_save_objects(blocks)
         self.session.commit()
+
+    def tearDown(self):
+        delete_blocks_test_data()
+        self.session.commit()
+        self.session.remove()
 
     def test_get_all_synteny_blocks(self):
         """ Test getting back all SyntenyBlock entries """
@@ -81,11 +86,6 @@ class SyntenyBlockModelTest(BaseDBTestCase):
             .first()
 
         self.assertIsNone(block)
-
-    def tearDown(self):
-        delete_blocks_test_data()
-        self.session.commit()
-        self.session.remove()
 
 
 if __name__ == '__main__':

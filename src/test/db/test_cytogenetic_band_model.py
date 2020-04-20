@@ -7,7 +7,7 @@ import logging
 from src.test import BaseDBTestCase
 from flask_restplus import marshal
 from src.app.model import SESSION, CytogeneticBand
-from src.test.data.cytogenetic_band_data import CYTOGENETIC_BAND_DATA
+from src.test.data.cytogenetic_bands_test_data import CYTOGENETIC_BAND_DATA
 from src.app.controller.cytogenetic_bands_controller import CYTOGENETIC_BAND_SCHEMA
 from src.test.utils import read_test_cytogenetic_band_data, delete_cytogenetic_band_test_data
 
@@ -25,10 +25,16 @@ class CytogeneticBandModelTest(BaseDBTestCase):
     """ Test interacting with the provided CytogeneticBand SqlAlchemy definition. """
 
     def setUp(self):
-        cytogenetic_band = read_test_cytogenetic_band_data()
+        bands = read_test_cytogenetic_band_data()
 
-        self.session.bulk_save_objects(cytogenetic_band)
+        self.session.bulk_save_objects(bands)
         self.session.commit()
+
+    def tearDown(self):
+        delete_cytogenetic_band_test_data()
+
+        self.session.commit()
+        self.session.remove()
 
     def test_get_cytogenetic_band(self):
         """ POSITIVE CASE: Test getting back all cytogenetic bands. """
@@ -50,12 +56,6 @@ class CytogeneticBandModelTest(BaseDBTestCase):
             .filter(CytogeneticBand.taxon_id == neg_taxonid) \
             .first()
         self.assertIsNone(cytogenetic_band)
-
-    def tearDown(self):
-        delete_cytogenetic_band_test_data()
-
-        self.session.commit()
-        self.session.remove()
 
 
 if __name__ == '__main__':

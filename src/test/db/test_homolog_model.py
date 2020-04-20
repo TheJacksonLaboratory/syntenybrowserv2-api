@@ -6,7 +6,7 @@ from sqlalchemy import and_
 from src.test import BaseDBTestCase
 from src.app.model import SESSION, Homolog
 from src.test.utils import read_test_homologs_data, delete_homologs_test_data
-from src.test.data.genes_data import GENES_DATA
+from src.test.data.genes_test_data import GENES_DATA
 
 
 class DBConnectionTest(BaseDBTestCase):
