@@ -49,19 +49,36 @@ class QtlModelTest(BaseDBTestCase):
 
     def test_get_loci_when_valid_species_id(self):
         """
-        Positive case:
+        Positive case: test getting back all QTL records for a specific valid species.
         """
         species_id = QTLS_DATA[0][0]
+        expected_loci_ids = [locus[11] for locus in QTLS_DATA if locus[0] == species_id]
 
         loci = SESSION.query(Feature)\
-            .filter(Feature.taxon_id == species_id).all()
+            .filter(and_(Feature.taxon_id == species_id, Feature.type == 'QTL')).all()
         self.assertIsNotNone(loci)
 
-        for i, locus in enumerate(loci):
-            for record in QTLS_DATA:
-                if record[0] == species_id:
-                    serialized = marshal(locus, QTLS_SCHEMA)
-                    self.assertTrue(serialized['id'] in [11])
+        for locus in loci:
+            serialized = marshal(locus, QTLS_SCHEMA)
+            self.assertTrue(serialized["id"] in expected_loci_ids)
+
+    def test_get_loci_when_valid_species_and_chromsome(self):
+        """
+        Positive case: test getting back all QTL records for a specific valid species and chromosome.
+        """
+        species_id = QTLS_DATA[0][0]
+        chromosome = QTLS_DATA[0][1]
+        expected_loci_ids = [locus[11] for locus in QTLS_DATA if locus[0] == species_id and locus[1] == chromosome]
+
+        loci = SESSION.query(Feature)\
+            .filter(and_(Feature.type == 'QTL',
+                         Feature.taxon_id == species_id,
+                         Feature.seq_id == chromosome))
+        self.assertIsNotNone(loci)
+
+        for locus in loci:
+            serialized = marshal(locus, QTLS_SCHEMA)
+            self.assertTrue(serialized["id"] in expected_loci_ids)
 
 
 if __name__ == '__main__':
