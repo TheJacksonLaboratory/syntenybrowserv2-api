@@ -11,6 +11,7 @@ class Exon(BASE):
     """
     __tablename__ = 'exon'
 
+    # id = Column("exon_id", String)
     parent_gene = Column(String, ForeignKey('gene.gene_id'), primary_key=True)
     taxonid = Column(Integer)
     exon_chr = Column(String)
@@ -18,4 +19,4 @@ class Exon(BASE):
     end = Column("exon_end_pos", Integer, primary_key=True)
 
     def __repr__(self):
-        return f"<Exon: (gene='self.parent_gene', species='self.taxonid')>"
+        return f"<Exon: (gene='self.id', species='self.taxonid')>"
