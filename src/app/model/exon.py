@@ -11,7 +11,7 @@ class Exon(BASE):
     """
     __tablename__ = 'exon'
 
-    # id = Column("exon_id", String)
+    id = Column("exon_id", String)
     parent_gene = Column(String, ForeignKey('gene.gene_id'), primary_key=True)
     taxonid = Column(Integer)
     exon_chr = Column(String)
