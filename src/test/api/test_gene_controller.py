@@ -2,30 +2,44 @@
 import unittest
 
 from src.test import BaseTestCase
-from src.test.utils import read_test_genes_data, read_test_exons_data, \
-    delete_exons_test_data, delete_genes_test_data
+from src.test.utils import read_test_genes_data, read_test_exons_data, read_test_blocks_data, \
+    delete_exons_test_data, delete_genes_test_data, delete_blocks_test_data
 
 
 class GeneEndpointsTests(BaseTestCase):
     """ A class to test the /genes endpoint and all its derivatives. """
 
     def setUp(self):
+        blocks = read_test_blocks_data()
         genes = read_test_genes_data()
         exons = read_test_exons_data()
 
-        self.session.bulk_save_objects(genes)
-        self.session.bulk_save_objects(exons)
+        # test data for the 'gene', 'gene_ontology_map' and 'on_terms' tables;
+        # because the 'on_terms' table has UNIQUE constraint on 'id', use session.merge() (rather than session.add())
+        for gene in genes:
+            self.session.merge(gene)
+            self.session.flush()
+
+        self.session.add_all(exons)
+        self.session.add_all(blocks)
         self.session.commit()
 
-    # TESTING that the endpoints' responses return the correct number of genes
-    # DESCRIPTION: this is to check that each endpoint calls the correct service to produce the results
+    def tearDown(self):
+        delete_blocks_test_data()
+        delete_exons_test_data()
+        delete_genes_test_data()
+
+        self.session.commit()
+        self.session.remove()
+
+>>>>>>> d3ece2d... added endpoint test and made changes in the test data (due to DB schema update in table 'exon')
     def test_get_all_genes(self):
         """
         Return all the genes available in the database.
 
         :return:
         """
-        expected_number_of_genes = 10
+        expected_number_of_genes = 11
         response = self.client.get('/api/genes/')
 
         self.assert200(response)
@@ -34,8 +48,7 @@ class GeneEndpointsTests(BaseTestCase):
     def test_get_mus_musculus_genes(self):
         """
         For a specific species - M. musculus (mouse) - return all genes.
-
-        :return:
+        :return: None
         """
         expected_number_of_genes = 6
         response = self.client.get('api/genes/10090')
@@ -46,11 +59,21 @@ class GeneEndpointsTests(BaseTestCase):
     def test_get_homo_sapiens_chr14_genes(self):
         """
         For a specific species and chromosome - H. sapiens (human), chromosome 14 - return all genes.
+        :return: None
+        """
+        expected_number_of_genes = 2
+        response = self.client.get('api/genes/9606/14')
 
-        :return:
+        self.assert200(response)
+        self.assertEqual(len(response.json), expected_number_of_genes)
+
+    def test_get_mus_musculus_chr14_comparison_genes(self):
+        """
+        For a specific reference and comparison species, and a reference chromosome 12 - return all comparison genes
+        :return: None
         """
         expected_number_of_genes = 1
-        response = self.client.get('api/genes/9606/14')
+        response = self.client.get('api/genes/10090/9606/12')
 
         self.assert200(response)
         self.assertEqual(len(response.json), expected_number_of_genes)
