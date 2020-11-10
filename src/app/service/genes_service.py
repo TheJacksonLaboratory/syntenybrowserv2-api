@@ -49,7 +49,7 @@ def get_genes_by_species_chromosome(species_id, chromosome):
 
 def get_genes_by_species_chromosome_position(species_id, chromosome, block_start, block_end):
     """
-    Returns a list of Gene objects selected based on specific species, chromosome, and chromosome location.
+    Returns a list of Gene objects selected based on specific species, chromosome, and range on the chromosome.
 
     :param species_id: NCBI species ID, such as 9606 (H. sapiens), 10090 (M. musculus), etc.
     :param chromosome: species chromosome ID
