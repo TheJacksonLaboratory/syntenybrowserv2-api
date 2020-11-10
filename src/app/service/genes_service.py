@@ -1,3 +1,5 @@
+from sqlalchemy import and_
+
 from src.app.model import SESSION, Gene
 
 
@@ -39,6 +41,27 @@ def get_genes_by_species_chromosome(species_id, chromosome):
     query = SESSION.query(Gene).filter_by(
         taxon_id=species_id,
         chr=chromosome
+    )
+    genes = query.all()
+
+    return genes
+
+
+def get_genes_by_species_chromosome_position(species_id, chromosome, block_start, block_end):
+    """
+    Returns a list of Gene objects selected based on specific species, chromosome, and chromosome location.
+
+    :param species_id: NCBI species ID, such as 9606 (H. sapiens), 10090 (M. musculus), etc.
+    :param chromosome: species chromosome ID
+    :block_start: synteny block start position
+    :block_end: synteny block end position
+    :return: genes - a list of Gene objects or an empty list
+    """
+    query = SESSION.query(Gene).filter(
+        and_(Gene.taxon_id == species_id,
+             Gene.chr == chromosome,
+             Gene.start <= block_end,
+             Gene.end >= block_start)
     )
     genes = query.all()
 
