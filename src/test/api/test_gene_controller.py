@@ -32,12 +32,9 @@ class GeneEndpointsTests(BaseTestCase):
         self.session.commit()
         self.session.remove()
 
->>>>>>> d3ece2d... added endpoint test and made changes in the test data (due to DB schema update in table 'exon')
     def test_get_all_genes(self):
         """
-        Return all the genes available in the database.
-
-        :return:
+        POSITIVE CASE - return all available in the database genes.
         """
         expected_number_of_genes = 11
         response = self.client.get('/api/genes/')
@@ -47,8 +44,7 @@ class GeneEndpointsTests(BaseTestCase):
 
     def test_get_mus_musculus_genes(self):
         """
-        For a specific species - M. musculus (mouse) - return all genes.
-        :return: None
+        POSITIVE CASE - return all genes for a specific species - M. musculus (mouse).
         """
         expected_number_of_genes = 6
         response = self.client.get('api/genes/10090')
@@ -58,8 +54,7 @@ class GeneEndpointsTests(BaseTestCase):
 
     def test_get_homo_sapiens_chr14_genes(self):
         """
-        For a specific species and chromosome - H. sapiens (human), chromosome 14 - return all genes.
-        :return: None
+        POSITIVE CASE - return all genes for a specific species and chromosome - H. sapiens (human), chromosome 14.
         """
         expected_number_of_genes = 2
         response = self.client.get('api/genes/9606/14')
@@ -69,8 +64,8 @@ class GeneEndpointsTests(BaseTestCase):
 
     def test_get_mus_musculus_chr14_comparison_genes(self):
         """
-        For a specific reference and comparison species, and a reference chromosome 12 - return all comparison genes
-        :return: None
+        POSITIVE CASE - return all comparison genes, both homologs and non-homologs, for a specific
+        reference and comparison species (M. musculus and H. sapiens), and a reference chromosome - 12.
         """
         expected_number_of_genes = 1
         response = self.client.get('api/genes/10090/9606/12')
@@ -83,8 +78,6 @@ class GeneEndpointsTests(BaseTestCase):
     def test_gene_response_marshaling(self):
         """
         Extract and validate response objects structure marshaled with GENES_SCHEMA.
-
-        :return:
         """
         expected_response_objects_properties = [
             'id', 'taxon_id', 'symbol', 'chr', 'start', 'end', 'strand', 'type', 'exons'
@@ -103,8 +96,6 @@ class GeneEndpointsTests(BaseTestCase):
     def test_gene_metadata_response_marshaling(self):
         """
         Extract and validate response objects structure marshaled with GENES_META_SCHEMA.
-
-        :return:
         """
         expected_response_objects_properties = [
             'id', 'taxon_id', 'symbol', 'chr', 'start', 'end', 'strand', 'type'
@@ -126,16 +117,13 @@ class GeneEndpointsTests(BaseTestCase):
     def test_get_all_genes_no_results(self):
         """
         To test this case the entire genes table should be empty, which is not possible.
-
-        :return:
         """
         pass
 
     def test_get_drosophila_melanogaster_genes_no_results(self):
         """
-        For a specific non-existent species - D. melanogaster - return (an error) message that no genes are available.
-
-        :return:
+        NEGATIVE CASE - return (en error) status code and message that no genes
+        are available for a specific non-existent species - D. melanogaster.
         """
         expected_response_object_key = ['message']
         # 7227 is Drosophila melanogaster's NSBI species taxonomy ID
@@ -148,9 +136,8 @@ class GeneEndpointsTests(BaseTestCase):
 
     def no_test_get_homo_sapiens_chr15_no_results(self):
         """
-        For a specific species (H. sapiens) with a non-existent chromosome (25) return an (error) message.
-
-        :return:
+        NEGATIVE CASE - return (an error) status code and message that no genes are
+        available for a specific species (H. sapiens) and a non-existent chromosome - 25.
         """
         expected_response_object_key = ['message']
         # there is not chromosome 25 in H. sapiens, so an error message is expected
