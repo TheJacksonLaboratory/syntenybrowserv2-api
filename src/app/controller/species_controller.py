@@ -1,7 +1,7 @@
 from flask_restplus import Resource, Namespace, abort
 from ..service.species_service import *
 
-ns = Namespace('species', description='Returns user provided provided config information about the reference and '
+ns = Namespace('species', description='Returns user provided config information about the reference and '
                                       'comparison species.')
 
 

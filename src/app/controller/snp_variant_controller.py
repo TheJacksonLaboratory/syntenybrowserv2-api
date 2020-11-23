@@ -34,7 +34,7 @@ class SnpVariants(Resource):
     @ns.marshal_with(SNP_VARIANT_SCHEMA, as_list=True)
     def get(self):
         """
-        Returns SNP variants data for all available species amd traits in the database.
+        Returns SNP variants data for all available species and traits in the database.
         """
         res = get_all_snps()
 
