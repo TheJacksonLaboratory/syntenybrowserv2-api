@@ -153,7 +153,7 @@ class OntAssocByTaxonAndTerm(Resource):
             # is very general and it could slow down the response processing;
             # in such cases a message will be returned instead, asking the client
             # to use a more specific term.
-            max_allowed_genes = 500
+            max_allowed_genes = 750
 
             # find all 'ont_term_id' ancestors - children, grandchildren, so on...
             parent_terms = list()
