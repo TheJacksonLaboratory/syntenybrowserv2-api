@@ -8,14 +8,13 @@ LABEL org.opencontainers.image.version="0.0.1"
 ENV PYTHONUNBUFFERED 1
 ENV PORT 8000
 ENV APP_HOME /opt/sb
-RUN mkdir -p $APP_HOME && python -m venv $APP_HOME/venv.app
-ENV PATH="$APP_HOME/venv.app/bin:$PATH"
+RUN mkdir -p $APP_HOME
 
 COPY . $APP_HOME
 WORKDIR $APP_HOME
 EXPOSE $PORT
 
-# ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["./deploy/entrypoint.sh"]
 
 RUN pip install --upgrade pip && pip install -r requirements.txt
 CMD gunicorn --workers=2 --threads=4 -b :$PORT wsgi:app
