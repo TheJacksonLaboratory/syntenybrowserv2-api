@@ -70,7 +70,8 @@ def read_test_genes_data():
             start=gene[4],
             end=gene[5],
             strand=gene[6],
-            type=gene[7]
+            type=gene[7],
+            name=gene[8]
         )
 
         ontologies = []
@@ -92,7 +93,7 @@ def read_test_exons_data():
     exons = []
 
     for gene in GENES_DATA:
-        for exon in gene[8]:
+        for exon in gene[9]:
             e = Exon(
                 parent_gene=exon[0],
                 taxonid=exon[1],
@@ -145,7 +146,7 @@ def read_test_homologs_data():
     homologs = []
 
     for gene in GENES_DATA:
-        for homolog in gene[9]:
+        for homolog in gene[10]:
             h = Homolog(
                 ref_gene_id=homolog[0],
                 ref_gene_sym=homolog[1],
@@ -153,14 +154,12 @@ def read_test_homologs_data():
                 ref_seq_id=homolog[3],
                 ref_start=homolog[4],
                 ref_end=homolog[5],
-                ref_strand=homolog[6],
-                id=homolog[7],
-                comp_gene_sym=homolog[8],
-                taxon_id=homolog[9],
-                chr=homolog[10],
-                comp_start=homolog[11],
-                comp_end=homolog[12],
-                comp_strand=homolog[13]
+                id=homolog[6],
+                comp_gene_sym=homolog[7],
+                taxon_id=homolog[8],
+                chr=homolog[9],
+                comp_start=homolog[10],
+                comp_end=homolog[11]
             )
             homologs.append(h)
 

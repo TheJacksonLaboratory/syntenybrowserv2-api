@@ -98,7 +98,7 @@ class GeneEndpointsTests(BaseTestCase):
         Extract and validate response objects structure marshaled with GENES_META_SCHEMA.
         """
         expected_response_objects_properties = [
-            'id', 'taxon_id', 'symbol', 'chr', 'start', 'end', 'strand', 'type'
+            'id', 'taxon_id', 'symbol', 'chr', 'start', 'end', 'strand', 'type', 'name'
         ]
         response = self.client.get('api/genes/metadata')
 
@@ -134,7 +134,7 @@ class GeneEndpointsTests(BaseTestCase):
         response_object_key = response.json.keys()
         self.assertCountEqual(response_object_key, expected_response_object_key)
 
-    def no_test_get_homo_sapiens_chr15_no_results(self):
+    def test_get_homo_sapiens_chr15_no_results(self):
         """
         NEGATIVE CASE - return (an error) status code and message that no genes are
         available for a specific species (H. sapiens) and a non-existent chromosome - 25.
