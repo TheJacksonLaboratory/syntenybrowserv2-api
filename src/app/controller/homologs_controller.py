@@ -29,7 +29,6 @@ GENES_SCHEMA = ns.model('HomologGenes', {
     'chr': fields.String,
     'start': fields.Integer,
     'end': fields.Integer,
-    'strand': fields.String,
     'type': fields.String,
     'exons': fields.List(fields.Nested(EXONS_SCHEMA)),
     'homologs': fields.List(fields.Nested(HOMOLOGS_SCHEMA))
@@ -69,5 +68,4 @@ class HomologsByChromosome(Resource):
             raise InvalidRequestArgumentValueException(400, message)
 
         res = get_homologs_by_species_ids_and_reference_chromosome(ref_taxonid, comp_taxonid, chromosome)
-
         return res, 200

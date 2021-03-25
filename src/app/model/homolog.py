@@ -13,7 +13,6 @@ class Homolog(BASE):
     ref_seq_id = Column(String)
     ref_start = Column(Integer)
     ref_end = Column(Integer)
-    ref_strand = Column(String)
     # attribute name changed according to the expected name in the serialized response
     id = Column('comp_gene_id', String, primary_key=True)
     comp_gene_sym = Column(String)
@@ -23,7 +22,6 @@ class Homolog(BASE):
     chr = Column('comp_seq_id', String)
     comp_start = Column(Integer)
     comp_end = Column(Integer)
-    comp_strand = Column(String)
 
     def __repr__(self):
         return f"<Homolog: (ref_gene='self.ref_gene_id', ref_species='self.ref_taxon_id', " \

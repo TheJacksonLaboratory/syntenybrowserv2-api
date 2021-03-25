@@ -23,6 +23,7 @@ class Gene(BASE):
     end = Column("gene_end_pos", Integer)
     strand = Column("gene_strand", String)
     type = Column("gene_type", String)
+    name = Column("gene_name", String)
 
     exons = relationship('Exon')
     homologs = relationship('Homolog')

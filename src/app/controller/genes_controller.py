@@ -26,6 +26,7 @@ GENES_SCHEMA = ns.model('Gene', {
     'end': fields.Integer,
     'strand': fields.String,
     'type': fields.String,
+    'name': fields.String,
     'exons': fields.List(fields.Nested(EXONS_SCHEMA))
 })
 
@@ -37,7 +38,8 @@ GENES_META_SCHEMA = ns.model('GeneMeta', {
     'start': fields.Integer,
     'end': fields.Integer,
     'strand': fields.String,
-    'type': fields.String
+    'type': fields.String,
+    'name': fields.String
 })
 
 
