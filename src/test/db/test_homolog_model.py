@@ -30,10 +30,10 @@ class HomologModelTest(BaseDBTestCase):
     def test_get_homologs_by_species_ids_and_reference_chromosome(self):
         """ Test getting back homologs by reference and comparison species IDs, and by reference species chromosome. """
 
-        ref_taxonid = GENES_DATA[7][9][0][2]
-        ref_chromosome = GENES_DATA[7][9][0][3]
+        ref_taxonid = GENES_DATA[7][10][0][2]
+        ref_chromosome = GENES_DATA[7][10][0][3]
 
-        comp_taxonid = GENES_DATA[7][9][0][9]
+        comp_taxonid = GENES_DATA[7][10][0][8]
 
         homolog = SESSION.query(Homolog)\
             .filter(and_(Homolog.ref_taxon_id == ref_taxonid,
@@ -49,9 +49,9 @@ class HomologModelTest(BaseDBTestCase):
 
         # 7227 is Drosophila melanogaster's NCBI species taxonomy ID
         ref_taxonid = 7227
-        ref_chromosome = GENES_DATA[7][9][0][3]
+        ref_chromosome = GENES_DATA[7][10][0][3]
 
-        comp_taxonid = GENES_DATA[7][9][0][9]
+        comp_taxonid = GENES_DATA[7][10][0][8]
 
         homolog = SESSION.query(Homolog) \
             .filter(and_(Homolog.ref_taxon_id == ref_taxonid,

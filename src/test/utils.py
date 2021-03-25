@@ -76,8 +76,16 @@ def read_test_genes_data():
 
         ontologies = []
 
-        # for term in genes[10]:
-
+        for term in gene[11]:
+            o = OntologyTerm(
+                id=term[0],
+                name=term[1],
+                namespace=term[2],
+                definition=term[3],
+                count=term[4],
+                descendants=[]
+            )
+            ontologies.append(o)
 
         genes.append(g)
 
