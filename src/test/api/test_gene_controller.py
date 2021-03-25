@@ -80,7 +80,7 @@ class GeneEndpointsTests(BaseTestCase):
         Extract and validate response objects structure marshaled with GENES_SCHEMA.
         """
         expected_response_objects_properties = [
-            'id', 'taxon_id', 'symbol', 'chr', 'start', 'end', 'strand', 'type', 'exons'
+            'id', 'taxon_id', 'symbol', 'chr', 'start', 'end', 'strand', 'type', 'exons', 'name'
         ]
         response = self.client.get('api/genes/')
 

@@ -43,7 +43,7 @@ class GeneEndpointsTests(BaseTestCase):
         :return:
         """
         expected_response_objects_properties = [
-            'id', 'taxon_id', 'symbol', 'chr', 'start', 'end', 'strand', 'type', 'exons', 'homologs'
+            'id', 'taxon_id', 'symbol', 'chr', 'start', 'end', 'type', 'exons', 'homologs'
         ]
         response = self.client.get('api/homologs/9606/10090/1')
 
