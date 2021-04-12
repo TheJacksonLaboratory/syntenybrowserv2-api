@@ -59,7 +59,7 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + \
                               os.path.join(BASEDIR,
-                                           '../synteny.db')
+                                           '../synteny.db?check_same_thread=False')
 
 
 class DevelopmentConfig(Config):
