@@ -18,50 +18,53 @@ ONTOLOGY_TERMS_DATA = [
         []
     ),
     (
-        'GO:1901206',
-        'positive regulation of adrenergic receptor signaling pathway involved in heart process',
+        'GO:0006435',
+        'threonyl-tRNA aminoacylation',
         'biological_process',
-        '"Any process that activates or increases the frequency, rate or extent '
-        'of a cardiac adrenergic receptor signaling pathway." [GOC:BHF, GOC:mtg_'
-        'cardiac_conduct_nov11, GOC:rl, GOC:TermGenie]',
+        '"The process of coupling threonine to threonyl-tRNA, catalyzed by threonyl-tRNA synthetase. '
+        'In tRNA aminoacylation, the amino acid is first activated by linkage to AMP and then transferred '
+        'to either the 2\'- or the 3\'-hydroxyl group of the 3\'-adenosine residue of the tRNA." '
+        '[GOC:mcc, ISBN:0716730510]',
         1,
         [
             (
-                'GO:1903247',
-                'positive regulation of adrenergic receptor signaling pathway '
-                'involved in positive regulation of heart rate',
+                'GO:0070159',
+                'mitochondrial threonyl-tRNA aminoacylation',
                 'biological_process',
-                '"Any process that activates or increases the frequency, rate or extent of '
-                'adrenergic receptor signaling pathway involved in positive regulation of '
-                'heart rate." [GO_REF:0000058, GOC:BHF, GOC:mtg_cardiac_conduct_nov11, GOC:rl, '
-                'GOC:TermGenie, PMID:17242280]',
-                0
+                '"The process of coupling threonine to threonyl-tRNA in a mitochondrion, '
+                'catalyzed by threonyl-tRNA synthetase. In tRNA aminoacylation, the amino acid '
+                'is first activated by linkage to AMP and then transferred to either the '
+                '2\'- or the 3\'-hydroxyl group of the 3\'-adenosine residue of the tRNA." [GOC:mah, GOC:mcc]',
+                0,
+                []
             )
         ]
     ),
     (
-        'GO:1904552',
-        'regulation of chemotaxis to arachidonic acid',
-        'biological_process',
-        '"Any process that modulates the frequency, rate or extent of chemotaxis to arachidonic acid." '
-        '[GO_REF:0000058, GOC:TermGenie, PMID:16382163]',
+        'GO:0046983',
+        'protein dimerization activity',
+        'molecular_function',
+        '"The formation of a protein dimer, a macromolecular structure consists of two noncovalently '
+        'associated identical or nonidentical subunits." [ISBN:0198506732]',
         2,
         [
             (
-                'GO:1904553',
-                'negative regulation of chemotaxis to arachidonic acid',
-                'biological_process',
-                '"Any process that stops, prevents or reduces the frequency, rate or extent of '
-                'chemotaxis to arachidonic acid." [GO_REF:0000058, GOC:TermGenie, PMID:16382163]',
-                0
+                'GO:0042803',
+                'protein homodimerization activity',
+                'molecular_function',
+                '"Interacting selectively and non-covalently with an identical '
+                'protein to form a homodimer." [GOC:jl]',
+                0,
+                []
             ),
             (
-                'GO:1904554',
-                'positive regulation of chemotaxis to arachidonic acid',
-                'biological_process',
-                '"Any process that activates or increases the frequency, rate or extent of chemotaxis '
-                'to arachidonic acid." [GO_REF:0000058, GOC:TermGenie, PMID:16382163]',
-                0
+                'GO:0046982',
+                'protein heterodimerization activity',
+                'molecular_function',
+                '"Interacting selectively and non-covalently with a nonidentical '
+                'protein to form a heterodimer." [GOC:ai]',
+                0,
+                []
             )
         ]
     ),
@@ -74,208 +77,150 @@ ONTOLOGY_TERMS_DATA = [
         []
     ),
     (
-        'MP:0001947',
-        'abnormal mucociliary clearance',
+        'MP:0002083',
+        'premature death',
         '',
-        '"anomaly in the mechanism that removes mucus and other foreign particles and microorganisms '
-        'from the lungs by directed ciliary movement and secretory activity of the tracheobronchial '
-        'submucosal glands" [MESH:E01.370.386.520, MGI:csmith, MGI:mnk]',
-        2,
+        '"death after weaning age, but before the normal life span (Mus: after 3 weeks of age)" [MGI:csmith]',
+        1,
         [
             (
-                'MP:0010752',
-                'impaired mucociliary clearance',
+                'MP:0008028',
+                'pregnancy-related premature death',
                 '',
-                '"reduced ability to remove mucus and other foreign particles and microorganisms '
-                'from the lungs by directed ciliary movement and secretory activity of the '
-                'tracheobronchial submucosal glands" [MESH:E01.370.386.520, MGI:csmith]',
-                0
-            ),
-            (
-                'MP:0010753',
-                'improved mucociliary clearance',
-                '',
-                '"enhanced ability to remove mucus and other foreign particles and microorganisms '
-                'from the lungs by directed ciliary movement and secretory activity of the '
-                'tracheobronchial submucosal glands" [MESH:E01.370.386.520, MGI:csmith]',
-                0
+                '"death occurring before the normal life span of an organism, occurring during '
+                'pregnancy, parturition or lactation" [MGI:csmith, MGI:hdene]',
+                0,
+                []
             )
         ]
     ),
     (
-        'MP:0003656',
-        'abnormal erythrocyte physiology',
+        'MP:0001265',
+        'decreased body size',
         '',
-        '"aberrant measurable or observable characteristic related to the function '
-        'of or processes in the cells in the blood that carry oxygen, red blood cells" [MPD:Molly]',
-        19,
+        '"smaller than average body weight, height and/or length of an organism compared '
+        'to controls" [ISBN:0-683-40008-8, PMID:7854452]',
+        9,
         [
             (
-                'MP:0003657',
-                'abnormal erythrocyte osmotic lysis',
+                'MP:0001255',
+                'decreased body height',
                 '',
-                '"increase or decrease in the ability of RBCs to withstand changes in osmolarity" [MGI:smb]',
-                0
+                '"decreased shoulder to floor distance compared to controls" [MGI:dlb]',
+                0,
+                []
             ),
             (
-                'MP:0010034',
-                'abnormal erythrocyte clearance',
+                'MP:0001258',
+                'decreased body length',
                 '',
-                '"any anomaly in the selective elimination of aging erythrocytes from the '
-                'body by autoregulatory mechanisms, often expressed as half-life" [GO:0034102, MGI:csmith]',
-                2
+                '"decreased measure of the head and trunk (head, thorax and abdomen) '
+                'in the rostral-caudal direction" [MGI:csmith]',
+                0,
+                []
             ),
             (
-                'MP:0010035',
-                'increased erythrocyte clearance',
+                'MP:0001262',
+                'decreased body weight',
                 '',
-                '"increased elimination of aging erythrocytes from the body by autoregulatory mechanisms, '
-                'often expressed as half-life" [GO:0034102, MGI:csmith]',
-                0
+                '"lower than normal average weight" [PMID:10709991]',
+                3,
+                [
+                    (
+                        'MP:0001263',
+                        'weight loss',
+                        '',
+                        '"progressive reduction of body weight below normal average for age" [PMID:9420327]',
+                        0,
+                        [
+                            'MP:0005150',
+                            'cachexia',
+                            '',
+                            '"general weight loss and wasting occurring in the course of chronic disease" '
+                            '[ISBN:0-683-40008-8]',
+                            0,
+                            []
+                        ]
+                    ),
+                    (
+                        'MP:0005150',
+                        'cachexia',
+                        '',
+                        '"general weight loss and wasting occurring in the course of chronic disease" '
+                        '[ISBN:0-683-40008-8]',
+                        0,
+                        []
+                    ),
+                    (
+                        'MP:0008489',
+                        'slow postnatal weight gain',
+                        '',
+                        '"the weight gain over a span of postnatal developmental time is slower than controls, '
+                        'with or without ever attaining a similar weight to controls as adults" [MGI:csmith]',
+                        0,
+                        []
+                    )
+                ]
             ),
             (
-                'MP:0010036',
-                'decreased erythrocyte clearance',
+                'MP:0001263',
+                'weight loss',
                 '',
-                '"decreased elimination of aging erythrocytes from the body by autoregulatory mechanisms, '
-                'often expressed as half-life" [GO:0034102, MGI:csmith]',
-                0
+                '"progressive reduction of body weight below normal average for age" [PMID:9420327]',
+                1,
+                [
+                    'MP:0005150',
+                    'cachexia',
+                    '',
+                    '"general weight loss and wasting occurring in the course of chronic disease" [ISBN:0-683-40008-8]',
+                    0,
+                    []
+                ]
             ),
             (
-                'MP:0010163',
-                'hemolysis',
+                'MP:0002427',
+                'disproportionate dwarf',
                 '',
-                '"destruction of erythrocytes such that hemoglobin is released from the cells; '
-                'may occur by many different causal agents such as antibodies, bacteria, chemicals, '
-                'temperature, and changes in tonicity" [ISBN:0-683-40008-8]',
-                1
+                '"abnormally undersized with disproportionate body parts; usually with '
+                'more significant shortening of the limbs in proportion to the trunk size" '
+                '[ISBN:0-683-40008-8, MGI:csmith]',
+                0,
+                []
             ),
             (
-                'MP:0011245',
-                'abnormal fetal derived definitive erythrocyte physiology',
+                'MP:0005150',
+                'cachexia',
                 '',
-                '"any functional anomaly of a fetal liver derived enucleated erythrocyte, '
-                'which matures in macrophage islands within the liver, enucleates, '
-                'and then enters the bloodstream; these resemble adult erythrocytes in that '
-                'they are small (3- to 6- times smaller than primitive erythrocytes) and produce '
-                'adult hemoglobins" [CL:0002357, PMID:18282515]',
-                0
+                '"general weight loss and wasting occurring in the course of chronic disease" [ISBN:0-683-40008-8]',
+                0,
+                []
             ),
             (
-                'MP:0012384',
-                'abnormal erythrocyte ion transport',
+                'MP:0008489',
+                'slow postnatal weight gain',
                 '',
-                '"aberrant measurable or observable characteristic related to the movement in red '
-                'blood cells of atoms carrying an electric charge" [MPD:Molly]',
-                12
+                '"the weight gain over a span of postnatal developmental time is slower than controls, '
+                'with or without ever attaining a similar weight to controls as adults" [MGI:csmith]',
+                0,
+                []
             ),
             (
-                'MP:0012385',
-                'abnormal erythrocyte potassium:chloride symporter activity',
+                'MP:0008974',
+                'proportional dwarf',
                 '',
-                '"aberrant catalysis in red blood cells of the transfer of a solute or solutes from '
-                'one side of a membrane to the other according to the reaction: K+(out) + Cl-(out) '
-                '= K+(in) + Cl-(in)" [GO:0015379, MPD:Molly]',
-                2
+                '"abnormally undersized with both limbs and trunk symmetrically shorter; '
+                'usually due to chemical, endocrine, nutritional or nonosseous influences" '
+                '[ISBN:0-683-40008-8, MGI:csmith]',
+                0,
+                []
             ),
             (
-                'MP:0012386',
-                'decreased erythrocyte potassium:chloride symporter activity',
+                'MP:0013138',
+                'thin body',
                 '',
-                '"decreased catalysis in red blood cells of the transfer of a solute or '
-                'solutes from one side of a membrane to the other according to the reaction: '
-                'K+(out) + Cl-(out) = K+(in) + Cl-(in)" [MPD:Molly]',
-                0
-            ),
-            (
-                'MP:0012387',
-                'increased erythrocyte potassium:chloride symporter activity',
-                '',
-                '"increased catalysis in red blood cells of the transfer of a solute or '
-                'solutes from one side of a membrane to the other according to the reaction: '
-                'K+(out) + Cl-(out) = K+(in) + Cl-(in)" [MPD:Molly]',
-                0
-            ),
-            (
-                'MP:0012388',
-                'abnormal erythrocyte sodium:hydrogen antiporter activity',
-                '',
-                '"aberrant catalysis in red blood cells of the transfer of a solute or '
-                'solutes from one side of a membrane to the other according to the reaction: '
-                'Na+(out) + H+(in) = Na+(in) + H+(out)" [GO:0015385, MPD:Molly]',
-                2
-            ),
-            (
-                'MP:0012389',
-                'decreased erythrocyte sodium:hydrogen antiporter activity',
-                '',
-                '"decreased catalysis in red blood cells of the transfer of a solute or '
-                'solutes from one side of a membrane to the other according to the reaction: '
-                'Na+(out) + H+(in) = Na+(in) + H+(out)" [MPD:Molly]',
-                0
-            ),
-            (
-                'MP:0012390',
-                'increased erythrocyte sodium:hydrogen antiporter activity',
-                '',
-                '"increased catalysis in red blood cells of the transfer of a solute or '
-                'solutes from one side of a membrane to the other according to the reaction: '
-                'Na+(out) + H+(in) = Na+(in) + H+(out)" [MPD:Molly]',
-                0
-            ),
-            (
-                'MP:0012391',
-                'abnormal erythrocyte sodium:potassium-exchanging ATPase activity',
-                '',
-                '"aberrant catalysis in red blood cells of the transfer of a solute or '
-                'solutes from one side of a membrane to the other according to the reaction: '
-                'ATP + H2O + Na+(in) + K+(out) = ADP + phosphate + Na+(out) + K+(in)" [GO:0005391, MPD:Molly]',
-                2
-            ),
-            (
-                'MP:0012392',
-                'decreased erythrocyte sodium:potassium-exchanging ATPase activity',
-                '',
-                '"decreased catalysis in red blood cells of the transfer of a solute or '
-                'solutes from one side of a membrane to the other according to the reaction: '
-                'ATP + H2O + Na+(in) + K+(out) = ADP + phosphate + Na+(out) + K+(in)" [MPD:Molly]',
-                0
-            ),
-            (
-                'MP:0012393',
-                'increased erythrocyte sodium:potassium-exchanging ATPase activity',
-                '',
-                '"increased catalysis in red blood cells of the transfer of a solute or '
-                'solutes from one side of a membrane to the other according to the reaction: '
-                'ATP + H2O + Na+(in) + K+(out) = ADP + phosphate + Na+(out) + K+(in)" [MPD:Molly]',
-                0
-            ),
-            (
-                'MP:0012394',
-                'abnormal erythrocyte calcium-activated potassium channel activity',
-                '',
-                '"aberrant catalysis in red blood cells of the calcium concentration-regulatable '
-                'energy-independent passage of potassium ions across a lipid bilayer down a '
-                'concentration gradient" [GO:0015269, MPD:Molly]',
-                2
-            ),
-            (
-                'MP:0012395',
-                'decreased erythrocyte calcium-activated potassium channel activity',
-                '',
-                '"decreased catalysis in red blood cells of the calcium concentration-regulatable '
-                'energy-independent passage of potassium ions across a lipid bilayer down a '
-                'concentration gradient" [MPD:Molly]',
-                0
-            ),
-            (
-                'MP:0012396',
-                'increased erythrocyte calcium-activated potassium channel activity',
-                '',
-                '"increased catalysis in red blood cells of the calcium concentration-regulatable '
-                'energy-independent passage of potassium ions across a lipid bilayer down a '
-                'concentration gradient" [MPD:Molly]',
-                0
+                '"lean or slender in form" [MGI:Ahmad_Retha]',
+                0,
+                []
             )
         ]
     ),
@@ -288,15 +233,23 @@ ONTOLOGY_TERMS_DATA = [
         []
     ),
     (
-        'DOID:0080100',
-        'congenital myopathy',
+        'DOID:9119',
+        'acute myeloid leukemia',
         '',
         '',
-        3,
+        1,
         [
-            ('DOID:0080101', 'Compton-North congenital myopathy', '', '', 0),
-            ('DOID:0080102', 'congenital fiber-type disproportion', '', '', 0),
-            ('DOID:0080103', 'cylindrical spirals myopathy', '', '', 0)
+            (
+                'DOID:0060318',
+                'acute promyelocytic leukemia',
+                '',
+                '"An acute myeloid leukemia characterized by accumulation of promyelocytes '
+                'in the bone marrow and by a translocation between chromosomes 15 and 17." '
+                '[url:http\\://en.wikipedia.org/wiki/Acute_promyelocytic_leukemia, '
+                'url:http\\://ghr.nlm.nih.gov/condition/acute-promyelocytic-leukemia]',
+                0,
+                []
+            )
         ]
     ),
     (

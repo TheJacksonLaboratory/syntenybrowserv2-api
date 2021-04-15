@@ -1,4 +1,4 @@
-from src.app.model import SESSION, BASE
+from src.app.model import SESSION
 
 from src.test.data.cytogenetic_bands_test_data import CYTOGENETIC_BAND_DATA
 from src.test.data.genes_test_data import GENES_DATA
@@ -13,8 +13,6 @@ from src.app.model.gene import Gene
 from src.app.model.homolog import Homolog
 from src.app.model.ontology_term import OntologyTerm
 from src.app.model.synteny_block import SyntenicBlock
-
-from jsonschema import validate
 
 
 from jsonschema import validate
@@ -87,6 +85,7 @@ def read_test_genes_data():
             )
             ontologies.append(o)
 
+        g.ontologies = ontologies
         genes.append(g)
 
     return genes
@@ -242,7 +241,12 @@ def delete_cytogenetic_band_test_data():
 
 
 def delete_genes_test_data():
-    SESSION.query(Gene).delete()
+    genes = SESSION.query(Gene).all()
+    # each Gene needs to be deleted individually in order to delete
+    # the associated records from table 'gene_ontology_map';
+    # bulk deleting all Gene instances doesn't delete the records in 'gene_ontology_map'
+    for gene in genes:
+        SESSION.delete(gene)
 
 
 def delete_exons_test_data():
@@ -259,9 +263,9 @@ def delete_homologs_test_data():
 
 def delete_test_ontology_terms_data():
     on_terms = SESSION.query(OntologyTerm).all()
-    # deleting each OntologyTerm individually is needed
-    # in order to delete the records in table 'on_pairs' too;
-    # bulk deleting all OntologyTerm instances doesn't delete records in 'on_pairs'
+    # each OntologyTerm needs to be deleted individually in order to delete
+    # the associated records from table 'on_pairs';
+    # bulk deleting all OntologyTerm instances doesn't delete the records in 'on_pairs'
     for term in on_terms:
         SESSION.delete(term)
 

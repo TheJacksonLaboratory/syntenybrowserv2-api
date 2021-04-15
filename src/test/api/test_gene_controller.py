@@ -148,13 +148,6 @@ class GeneEndpointsTests(BaseTestCase):
         response_object_key = response.json.keys()
         self.assertCountEqual(response_object_key, expected_response_object_key)
 
-    def tearDown(self):
-        delete_exons_test_data()
-        delete_genes_test_data()
-
-        self.session.commit()
-        self.session.remove()
-
 
 if __name__ == '__main__':
     unittest.main()
