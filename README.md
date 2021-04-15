@@ -1,86 +1,78 @@
-# SynBrowser
+# Synteny Browser API
+The JAX Synteny Browser [http://syntenybrowser.jax.org/](http://syntenybrowser.jax.org/) is an interactive web-based conserved synteny browser application. The browser allows researchers to highlight or selectively display genome features in the reference and/or the comparison genomes based on the biological attributes of the features. The current implementation for the browser supports the reference genomes of the laboratory mouse, rat and human.
 
-Jax Synteny Browser for Comparative Mouse/Human Genomics
+**Note**: This is the source code for the back-end API only! The source code of the front-end client and ETL (data loading) scripts can be found at [this](https://github.com/TheJacksonLaboratory/syntenybrowserv2-client) and [this](https://github.com/TheJacksonLaboratory/syntenybrowserv2-etl) GitHub repositories respectively.
+**URL**: [https://syntenybrowser.jax.org/api](http://syntenybrowser.jax.org/api)
 
+This application utilizes Flask-RESTPlus
 
-#### Setup
-If you elected to have cookiecutter create your virtual environment for you, all you need to run is:
+This repository contains the source code for the Synteny Browser (v2) microservice API application. You can find the source for the first version of Synteny Browser [here](https://github.com/TheJacksonLaboratory/syntenybrowser).
+
+## Installation and Setup
+**Prerequisites:** Python (we're running 3.7 or higher)
+#### Clone the API (back-end) code and navigate to the cloned project root
+```console
+    git clone https://github.com/TheJacksonLaboratory/syntenybrowserv2-api.git
 ```
-source <name_of_virtual_environemtn>/bin/activate
+#### Create virtual environment:
+```console
+    cd syntenybrowserv2-api
+    python3 -m venv venv.sb
 ```
-Otherwise, you should first create a virtual environment:
+#### Activate Virtual environment:
+```console
+    source venv.sb/bin/activate
 ```
-python3 -m venv venv.sb
-source venv.sb/bin/activate
-pip install -r requirements.txt
-pip freeze > requirements.txt
+#### Install dependencies in the virtual env:
+```    
+    pip install -r requirements.txt
+    pip freeze > requirements.txt
 ```
+#### Setup DB (SQLite for development):
+Once Virtualenv is installed, you'll need a database. Follow [this guide] (https://github.com/TheJacksonLaboratory/syntenybrowserv2-etl) to create a database and once created, copy the file to the project root.
 
-##### Config
-Edit the `config.ini` file to specify server specific values.
-
-To autogenerate `synbrowser.config` secrets, call:
-```python -m manage init_config```
-
-
-## SynBrowser Management
-The flask service is managed with the manage.py module. Depending on the template options you selected, some features 
-may be unavailable.
-
-It can be accessed with either:
-```bash
-python -m manage --help
+#### Run tests:
+```console
+    python manage.py test  (All test should be successful)
 ```
-or
-```bash
-python manage.py --help
+#### Run pylint for code quality check (optional - before committing new code)
+```console
+    pylint app.main
+    pylint app.test
+    pylint app
 ```
+#### Run the Flask app:
+```console
+    python manage.py run
+```
+Swagger doc API will be available at http://localhost:5000/api/
 
-```bash
-usage: manage.py [-?] {run,db,start_workers,test,test_xml,shell,runserver} ...
-
-positional arguments:
-  {run,db,start_workers,test,test_xml,shell,runserver}
-    run                 The main entrypoint to running the app :return: None
-    db                  Perform database migrations
-    start_workers       Start the celery worker(s)
-    test                Run unit tests
-    test_xml            Runs the unit tests specifically for bamboo CI/CD
-    shell               Runs a Python shell inside Flask application context.
-    runserver           Runs the Flask development server i.e. app.run()
-
-optional arguments:
-  -?, --help            show this help message and exit
-
+## Running the application with Docker
+#### Clone the API (back-end) code and navigate to the cloned project root
+```console
+    git clone https://github.com/TheJacksonLaboratory/syntenybrowserv2-api.git
 ```
 
-## Using SynBrowser
+#### Setup DB (SQLite for development):
+You'll need a database. Follow [this guide] (https://github.com/TheJacksonLaboratory/syntenybrowserv2-etl) to create a database and once created, copy the file to the project root.
 
-### Celery
-Before calling a celery task, you need to first start a worker with:
+#### Build an image called **synteny-api**
+```console
+    docker build . --tag=synteny-api
+```
 
-- ```python -m manage start_workers```
+#### Start a container based on the created Docker image - **synteny-api**
+```console
+    docker run -p 8000:8000 -d --rm synteny-api
+```
+Swagger doc API will be available at http://localhost:8000/api/
 
-Then you can submit a task:
-- ```curl -X POST "http://<SERVER_ADDR>/api/hello/slow_reverse?to_reverse=example" -H "accept: application/json"```
 
-Submitting a task returns a task ID, which can be used to ask for a result:
-- ```curl -X GET "http://<SERVER_ADDR>/api/hello/slow_reverse?task_id=c94e2f89-4b89-4a6b-bd6e-463f19b19aaa" -H "accept: application/json"```
 
-### Globus
+## Further help
+To get more help on the Flask-RESTPlus go check out the [Flask-RESTPlus's documentation ](https://flask-restplus.readthedocs.io/en/stable/).
 
-Globus endpoints require you to be authenticated, once authenticated you will need to register with Globus
+If you run into problems with Synteny Browser, specifically, feel free to email us at [synbrowser-support@jax.org](mailto:synbrowser-support@jax.org) or create an issue in the synteny-api repo on Github.
 
-Calling the following will return an auth_url that you should navigate to:
-- ```curl -X GET "http://127.0.0.1:5000/api/globus/login" -H "accept: application/json"```
-
-Globus will do it's part in the oauth flow, then redirect the user back to SynBrowser with a code 
-that can be used to get Globus tokens. SynBrowser then issues new tokens that include the globus
-information and returns them to the user.
-
-Credits
--------
-This package was created with Cookiecutter and the `cookiecutter_flask_service` project template. The template was 
-created and is maintained by Alexander Berger <alexander.berger@jax.org>.
-
-This application was created by Georgi Kolishovski <georgi.kolishovski@jax.org>.
+## License
+The JAX Synteny Browser is provided under the license found [here](LICENSE.md)
