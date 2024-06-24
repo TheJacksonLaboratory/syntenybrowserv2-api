@@ -13,5 +13,4 @@ __pycache__
 *.db
 migrations/*
 synbrowser.config
-deploy/*
 !deploy/example*
